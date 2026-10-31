@@ -1,116 +1,629 @@
-from pathlib import Path
-import zipfile, shutil, json, re
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101820">
+<title>Lares 0.6</title>
 
-src = Path("/mnt/data/lares_inspect/Lares-main/index.html")
-html = src.read_text(encoding="utf-8")
+<style>
+:root {
+  --bg:#101820;
+  --panel:#192630;
+  --panel2:#223440;
+  --text:#edf4f7;
+  --muted:#a8bbc5;
+  --accent:#54d6b0;
+  --danger:#ff7777;
+  --border:#304653;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+}
+header {
+  padding:20px;
+  background:#14212b;
+  border-bottom:1px solid var(--border);
+}
+.brand { font-size:27px;font-weight:800; }
+.brand span { color:var(--accent); }
+.subtitle { color:var(--muted);font-size:13px; }
+nav {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:10px;
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:5;
+}
+button {
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:15px;
+  cursor:pointer;
+}
+button.primary {
+  background:var(--accent);
+  color:#10251f;
+  font-weight:bold;
+}
+button.active { background:var(--accent);color:#10251f; }
+main { max-width:760px;margin:auto;padding:12px; }
+.page { display:none; }
+.page.active { display:block; }
+.card,.stat {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:16px;
+  margin-bottom:14px;
+}
+h2 { font-size:21px; }
+h3 { font-size:17px; }
+p { line-height:1.5; }
+.muted,label,.notice { color:var(--muted); }
+label { display:block;font-size:14px;margin-top:8px; }
+input,textarea,select {
+  display:block;
+  width:100%;
+  margin:6px 0 12px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#101b23;
+  color:var(--text);
+  font:inherit;
+}
+textarea { min-height:90px; }
+.row { display:flex;gap:8px;align-items:center; }
+.row input { flex:1;min-width:0; }
+.stats {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+.stat strong {
+  display:block;
+  color:var(--accent);
+  font-size:25px;
+}
+.item {
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  overflow-wrap:anywhere;
+}
+.item.done .item-text {
+  text-decoration:line-through;
+  color:var(--muted);
+}
+.item-text { flex:1; }
+.item small { display:block;color:var(--muted); }
+.check { width:20px; }
+.delete { color:var(--danger);background:transparent; }
+.bubble {
+  background:#101b23;
+  padding:14px;
+  border-radius:10px;
+  white-space:pre-wrap;
+}
+.map-actions {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.map-actions button { flex:1; }
+.notice { font-size:12px;line-height:1.5; }
+.status { margin-top:12px;white-space:pre-wrap; }
+footer {
+  text-align:center;
+  padding:20px;
+  color:var(--muted);
+  font-size:12px;
+}
+@media(min-width:600px) {
+  .stats { grid-template-columns:repeat(4,1fr); }
+}
+</style>
+</head>
 
-# Add a backup/import panel on the home page, before the daily card.
-marker = '''      <div class="card">
-        <h3>📅 Mai nap</h3>'''
-insert = '''      <div class="card">
-        <h3>💾 Adatbiztonság</h3>
-        <p class="muted">Mentsd le a Lares adatait fájlba, mielőtt új funkciókat próbálunk ki vagy telefont cserélsz.</p>
-        <button class="primary" id="exportButton" type="button">Biztonsági mentés letöltése</button>
-        <label for="importFile">Korábbi Lares-mentés visszaállítása</label>
-        <input id="importFile" type="file" accept=".json,application/json">
-        <p class="notice">A visszaállítás a jelenlegi feladatokat, jegyzeteket, projekteket és bevásárlólistát lecseréli a kiválasztott mentés tartalmára. Előtte készíts egy friss mentést!</p>
-        <div id="backupStatus" class="notice" role="status" aria-live="polite"></div>
-      </div>
+<body>
+<header>
+  <div class="brand">LARES<span>.</span></div>
+  <div class="subtitle">Személyi asszisztens · 0.6 térképes prototípus</div>
+</header>
 
-      <div class="card">
-        <h3>📅 Mai nap</h3>'''
-assert marker in html
-html = html.replace(marker, insert, 1)
+<nav id="navigation">
+  <button class="active" data-page="home">🏠 Főoldal</button>
+  <button data-page="tasks">✅ Feladatok</button>
+  <button data-page="notes">📝 Jegyzetek</button>
+  <button data-page="projects">📁 Projektek</button>
+  <button data-page="shopping">🛒 Lista</button>
+  <button data-page="map">📍 Térkép</button>
+</nav>
 
-# Insert backup/restore logic before the date initialization.
-marker2 = '''    const now = new Date();
+<main>
+<section class="page active" id="home">
+  <div class="card">
+    <h2>Üdv, Edvard!</h2>
+    <p>Lares vagyok. Folytassuk a teendőidet!</p>
+    <div id="dailyMessage" class="bubble">
+      Válassz egy funkciót a menüből.
+    </div>
+  </div>
 
-    document.getElementById("today").textContent ='''
-insert2 = '''    // Biztonsági mentés: a négy adatkategóriát JSON-fájlba exportálja.
-    document.getElementById("exportButton").addEventListener("click", () => {
-      try {
-        const backup = {
-          app: "Lares",
-          version: "0.5",
-          exportedAt: new Date().toISOString(),
-          data: data
-        };
-        const blob = new Blob([JSON.stringify(backup, null, 2)], {
-          type: "application/json"
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-        link.href = url;
-        link.download = `lares-mentes-${stamp}.json`;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        document.getElementById("backupStatus").textContent =
-          "A mentés letöltését elindítottam. Ellenőrizd a telefon Letöltések mappáját.";
-      } catch (error) {
-        document.getElementById("backupStatus").textContent =
-          "Nem sikerült elkészíteni a mentést. Próbáld újra.";
-      }
-    });
+  <div class="stats">
+    <div class="stat"><strong id="taskCount">0</strong>Nyitott feladat</div>
+    <div class="stat"><strong id="noteCount">0</strong>Jegyzet</div>
+    <div class="stat"><strong id="projectCount">0</strong>Projekt</div>
+    <div class="stat"><strong id="shoppingCount">0</strong>Beszerzendő</div>
+  </div>
 
-    document.getElementById("importFile").addEventListener("change", async event => {
-      const file = event.target.files && event.target.files[0];
-      const status = document.getElementById("backupStatus");
-      if (!file) return;
+  <div class="card">
+    <h3>📅 Mai nap</h3>
+    <p id="today"></p>
+    <button class="primary" data-goto="tasks">Feladatok megnyitása</button>
+  </div>
 
-      try {
-        const parsed = JSON.parse(await file.text());
-        const imported = parsed && parsed.data ? parsed.data : parsed;
+  <div class="card">
+    <h3>💬 Beszélj Laresszel</h3>
+    <p class="muted">Ez a prototípus még nem használ valódi AI-modellt.</p>
+    <textarea id="question" placeholder="Mit szeretnél elintézni?"></textarea>
+    <button class="primary" id="askButton">Lares, segíts!</button>
+    <div id="answer" class="bubble" style="display:none;margin-top:12px"></div>
+  </div>
+</section>
 
-        const valid =
-          imported &&
-          Array.isArray(imported.tasks) &&
-          Array.isArray(imported.notes) &&
-          Array.isArray(imported.projects) &&
-          Array.isArray(imported.shopping);
+<section class="page" id="tasks">
+  <div class="card">
+    <h2>✅ Feladatok</h2>
+    <form id="taskForm">
+      <label>Feladat neve</label>
+      <input id="taskTitle" required maxlength="200">
+      <label>Határidő</label>
+      <input id="taskDate" type="date">
+      <button class="primary">+ Feladat hozzáadása</button>
+    </form>
+  </div>
+  <div class="card"><h3>Feladatlista</h3><div id="taskList"></div></div>
+</section>
 
-        if (!valid) {
-          throw new Error("invalid backup");
-        }
+<section class="page" id="notes">
+  <div class="card">
+    <h2>📝 Jegyzetek</h2>
+    <form id="noteForm">
+      <label>Cím</label>
+      <input id="noteTitle" required maxlength="200">
+      <label>Tartalom</label>
+      <textarea id="noteBody"></textarea>
+      <button class="primary">+ Jegyzet mentése</button>
+    </form>
+  </div>
+  <div class="card"><h3>Mentett jegyzetek</h3><div id="noteList"></div></div>
+</section>
 
-        if (!confirm("Biztosan visszaállítod ezt a mentést? A mostani Lares-adatok lecserélődnek.")) {
-          status.textContent = "A visszaállítást megszakítottam.";
-          event.target.value = "";
-          return;
-        }
+<section class="page" id="projects">
+  <div class="card">
+    <h2>📁 Projektek</h2>
+    <form id="projectForm">
+      <label>Projekt neve</label>
+      <input id="projectTitle" required maxlength="200">
+      <label>Leírás</label>
+      <textarea id="projectDescription"></textarea>
+      <button class="primary">+ Projekt létrehozása</button>
+    </form>
+  </div>
+  <div class="card"><h3>Aktív projektek</h3><div id="projectList"></div></div>
+</section>
 
-        data = {
-          tasks: imported.tasks,
-          notes: imported.notes,
-          projects: imported.projects,
-          shopping: imported.shopping
-        };
+<section class="page" id="shopping">
+  <div class="card">
+    <h2>🛒 Bevásárlólista</h2>
+    <form id="shoppingForm">
+      <label>Mit kell megvenni?</label>
+      <input id="shoppingTitle" required maxlength="200">
+      <button class="primary">+ Hozzáadás</button>
+    </form>
+  </div>
+  <div class="card"><h3>Beszerzendő dolgok</h3><div id="shoppingList"></div></div>
+</section>
+
+<section class="page" id="map">
+  <div class="card">
+    <h2>📍 Térképes emlékeztetők</h2>
+    <p class="muted">
+      Példa: „Vizet kell vennem” esetén közeli boltokat kereshetsz.
+      Ha a Lidl a cél, válaszd ki a Lidlt.
+    </p>
+
+    <label>Mire emlékeztessen a Lares?</label>
+    <input id="placeTask" maxlength="200" placeholder="Például: vizet kell vennem">
+
+    <label>Hol szeretnéd elintézni?</label>
+    <select id="placeTarget">
+      <option value="any">Bármelyik megfelelő bolt</option>
+      <option value="Lidl">Csak Lidl</option>
+      <option value="Idea">Csak Idea</option>
+      <option value="Maxi">Csak Maxi</option>
+      <option value="pharmacy">Gyógyszertár</option>
+      <option value="custom">Saját hely megadása</option>
+    </select>
+
+    <label>Saját hely neve vagy címe</label>
+    <input id="customPlace" maxlength="200" placeholder="Például: Lidl Ada">
+
+    <div class="map-actions">
+      <button class="primary" type="button" id="findPlace">Hely keresése</button>
+      <button type="button" id="savePlace">Emlékeztető mentése</button>
+    </div>
+
+    <div class="map-actions" style="margin-top:8px">
+      <button type="button" id="nearbyPlaces">Közeli boltok</button>
+      <button type="button" id="showPlaces">Mentett emlékeztetők</button>
+    </div>
+
+    <div id="placeStatus" class="status" aria-live="polite"></div>
+    <div id="placeList" class="status"></div>
+
+    <p class="notice">
+      Ez a verzió a Google Térképen indít keresést. Az automatikus,
+      háttérben működő helyfigyelés és telefonos értesítés még nincs bekapcsolva.
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>Lares 0.6 · A helyi adatok ezen a böngészőn tárolódnak.</footer>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "lares05_data_v1";
+const PLACE_KEY = "lares_place_reminders_v1";
+
+const emptyData = {
+  tasks: [], notes: [], projects: [], shopping: []
+};
+
+function loadData() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return {
+      tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
+      notes: Array.isArray(parsed.notes) ? parsed.notes : [],
+      projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+      shopping: Array.isArray(parsed.shopping) ? parsed.shopping : []
+    };
+  } catch {
+    return structuredClone(emptyData);
+  }
+}
+
+let data = loadData();
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    renderAll();
+  } catch {
+    alert("Nem sikerült menteni. Ellenőrizd a böngésző tárhelyét.");
+  }
+}
+
+function makeId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function safeText(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p =>
+    p.classList.toggle("active", p.id === name)
+  );
+  document.querySelectorAll("#navigation button").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === name)
+  );
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("#navigation button").forEach(button =>
+  button.addEventListener("click", () => showPage(button.dataset.page))
+);
+
+document.querySelectorAll("[data-goto]").forEach(button =>
+  button.addEventListener("click", () => showPage(button.dataset.goto))
+);
+
+function renderItems(containerId, items, type, makeHTML) {
+  const box = document.getElementById(containerId);
+  if (!items.length) {
+    box.innerHTML = '<div class="muted">Még nincs itt semmi.</div>';
+    return;
+  }
+  box.innerHTML = items.map(makeHTML).join("");
+
+  box.querySelectorAll("[data-delete]").forEach(button =>
+    button.addEventListener("click", () => {
+      if (!confirm("Biztosan törlöd ezt az elemet?")) return;
+      data[button.dataset.type] =
+        data[button.dataset.type].filter(x => x.id !== button.dataset.id);
+      saveData();
+    })
+  );
+
+  box.querySelectorAll("[data-toggle]").forEach(input =>
+    input.addEventListener("change", () => {
+      const item = data[input.dataset.type].find(x => x.id === input.dataset.id);
+      if (item) {
+        item.done = input.checked;
         saveData();
-        status.textContent = "A mentés visszaállítása sikerült.";
-      } catch (error) {
-        status.textContent =
-          "Ezt a fájlt nem tudtam Lares-mentésként beolvasni. Az adataid nem változtak.";
-      } finally {
-        event.target.value = "";
       }
-    });
+    })
+  );
+}
 
-    const now = new Date();
+function renderAll() {
+  renderItems("taskList", data.tasks, "tasks", item => `
+    <div class="item ${item.done ? "done" : ""}">
+      <div class="row">
+        <input class="check" type="checkbox" data-toggle data-type="tasks"
+          data-id="${safeText(item.id)}" ${item.done ? "checked" : ""}>
+        <div class="item-text">${safeText(item.title)}
+          ${item.date ? `<small>Határidő: ${safeText(item.date)}</small>` : ""}
+        </div>
+        <button class="delete" data-delete data-type="tasks"
+          data-id="${safeText(item.id)}">✕</button>
+      </div>
+    </div>`);
 
-    document.getElementById("today").textContent ='''
-assert marker2 in html
-html = html.replace(marker2, insert2, 1)
+  renderItems("noteList", data.notes, "notes", item => `
+    <div class="item">
+      <strong>${safeText(item.title)}</strong>
+      <small>${safeText(item.created)}</small>
+      <p>${safeText(item.body).replaceAll("\n","<br>")}</p>
+      <button class="delete" data-delete data-type="notes" data-id="${safeText(item.id)}">Törlés</button>
+    </div>`);
 
-outdir = Path("/mnt/data/Lares_05_backup_update")
-outdir.mkdir(exist_ok=True)
-(outdir / "index.html").write_text(html, encoding="utf-8")
-zip_path = Path("/mnt/data/Lares_05_backup_update.zip")
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-    zf.write(outdir / "index.html", arcname="index.html")
+  renderItems("projectList", data.projects, "projects", item => `
+    <div class="item">
+      <strong>${safeText(item.title)}</strong>
+      <p>${safeText(item.description).replaceAll("\n","<br>")}</p>
+      <small>Létrehozva: ${safeText(item.created)}</small>
+      <button class="delete" data-delete data-type="projects" data-id="${safeText(item.id)}">Törlés</button>
+    </div>`);
 
-print("Elkészült a Lares 0.5 biztonsági mentés funkcióval bővített változata:")
-print(f"- HTML: {outdir / 'index.html'}")
-print(f"- ZIP: {zip_path}")
-print("A meglévő kód érintetlen maradt; ez egy külön fejlesztési változat.")
+  renderItems("shoppingList", data.shopping, "shopping", item => `
+    <div class="item ${item.done ? "done" : ""}">
+      <div class="row">
+        <input class="check" type="checkbox" data-toggle data-type="shopping"
+          data-id="${safeText(item.id)}" ${item.done ? "checked" : ""}>
+        <div class="item-text">${safeText(item.title)}</div>
+        <button class="delete" data-delete data-type="shopping"
+          data-id="${safeText(item.id)}">✕</button>
+      </div>
+    </div>`);
+
+  document.getElementById("taskCount").textContent =
+    data.tasks.filter(x => !x.done).length;
+  document.getElementById("noteCount").textContent = data.notes.length;
+  document.getElementById("projectCount").textContent = data.projects.length;
+  document.getElementById("shoppingCount").textContent =
+    data.shopping.filter(x => !x.done).length;
+}
+
+document.getElementById("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+  data.tasks.unshift({
+    id:makeId(),
+    title:document.getElementById("taskTitle").value.trim(),
+    date:document.getElementById("taskDate").value,
+    done:false
+  });
+  saveData();
+  event.target.reset();
+});
+
+document.getElementById("noteForm").addEventListener("submit", event => {
+  event.preventDefault();
+  data.notes.unshift({
+    id:makeId(),
+    title:document.getElementById("noteTitle").value.trim(),
+    body:document.getElementById("noteBody").value.trim(),
+    created:new Date().toLocaleString("hu-HU")
+  });
+  saveData();
+  event.target.reset();
+});
+
+document.getElementById("projectForm").addEventListener("submit", event => {
+  event.preventDefault();
+  data.projects.unshift({
+    id:makeId(),
+    title:document.getElementById("projectTitle").value.trim(),
+    description:document.getElementById("projectDescription").value.trim(),
+    created:new Date().toLocaleDateString("hu-HU")
+  });
+  saveData();
+  event.target.reset();
+});
+
+document.getElementById("shoppingForm").addEventListener("submit", event => {
+  event.preventDefault();
+  data.shopping.unshift({
+    id:makeId(),
+    title:document.getElementById("shoppingTitle").value.trim(),
+    done:false
+  });
+  saveData();
+  event.target.reset();
+});
+
+document.getElementById("askButton").addEventListener("click", () => {
+  const question = document.getElementById("question").value.trim();
+  const answer = document.getElementById("answer");
+  if (!question) {
+    alert("Írd be, miben segítsek!");
+    return;
+  }
+  answer.style.display = "block";
+  answer.textContent =
+    "Ezt beírtad:\n\n" + question +
+    "\n\nA Lares jelenleg még nincs valódi AI-modellhez kapcsolva.";
+});
+
+function loadPlaces() {
+  try {
+    return JSON.parse(localStorage.getItem(PLACE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function savePlaces(items) {
+  localStorage.setItem(PLACE_KEY, JSON.stringify(items));
+}
+
+function getPlaceDetails() {
+  const task = document.getElementById("placeTask").value.trim();
+  const target = document.getElementById("placeTarget").value;
+  const custom = document.getElementById("customPlace").value.trim();
+
+  let query;
+  if (target === "custom") query = custom;
+  else if (target === "pharmacy") query = "gyógyszertár";
+  else if (target === "any") query = "bolt";
+  else query = target;
+
+  return {task,target,custom,query};
+}
+
+function openMap(query, nearby = false) {
+  const search = nearby ? "boltok a közelemben" : query;
+  const url = "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(search);
+  window.open(url, "_blank", "noopener");
+}
+
+document.getElementById("findPlace").addEventListener("click", () => {
+  const p = getPlaceDetails();
+  const status = document.getElementById("placeStatus");
+
+  if (p.target === "custom" && !p.custom) {
+    status.textContent = "Írd be a keresett hely nevét vagy címét.";
+    return;
+  }
+  if (p.target === "any" && !p.task) {
+    status.textContent = "Írd be, mit szeretnél elintézni.";
+    return;
+  }
+
+  const query = p.target === "any"
+    ? (p.task + " bolt")
+    : p.query;
+
+  openMap(query);
+  status.textContent =
+    "Megnyitottam a Google Térképet. Ellenőrizd a találatot és a helyet.";
+});
+
+document.getElementById("nearbyPlaces").addEventListener("click", () => {
+  openMap("boltok a közelemben", true);
+  document.getElementById("placeStatus").textContent =
+    "A Google Térképen engedélyezd a helyadatokat, ha közeli találatokat szeretnél.";
+});
+
+document.getElementById("savePlace").addEventListener("click", () => {
+  const p = getPlaceDetails();
+  const status = document.getElementById("placeStatus");
+
+  if (!p.task) {
+    status.textContent = "Írd be, mire emlékeztessen a Lares.";
+    return;
+  }
+  if (p.target === "custom" && !p.custom) {
+    status.textContent = "Írd be a saját hely nevét vagy címét.";
+    return;
+  }
+
+  const items = loadPlaces();
+  items.unshift({
+    id:makeId(),
+    task:p.task,
+    target:p.target,
+    custom:p.custom,
+    query:p.query,
+    created:new Date().toISOString()
+  });
+  savePlaces(items);
+  status.textContent = "Az emlékeztetőt elmentettem ezen a böngészőn.";
+  renderPlaces();
+});
+
+function renderPlaces() {
+  const box = document.getElementById("placeList");
+  const items = loadPlaces();
+
+  if (!items.length) {
+    box.textContent = "Még nincs mentett helyhez kötött emlékeztető.";
+    return;
+  }
+
+  box.innerHTML = "<h3>Mentett emlékeztetők</h3>" +
+    items.map(item => `
+      <div class="item">
+        <strong>${safeText(item.task)}</strong>
+        <small>Cél: ${safeText(
+          item.target === "any" ? "Bármelyik bolt" :
+          item.target === "custom" ? item.custom : item.target
+        )}</small>
+        <div class="map-actions" style="margin-top:8px">
+          <button type="button" data-open-place="${safeText(item.id)}">Térkép</button>
+          <button type="button" data-remove-place="${safeText(item.id)}">Törlés</button>
+        </div>
+      </div>`).join("");
+
+  box.querySelectorAll("[data-open-place]").forEach(button =>
+    button.addEventListener("click", () => {
+      const item = loadPlaces().find(x => x.id === button.dataset.openPlace);
+      if (item) openMap(item.target === "any" ? item.task + " bolt" :
+        item.target === "custom" ? item.custom : item.query);
+    })
+  );
+
+  box.querySelectorAll("[data-remove-place]").forEach(button =>
+    button.addEventListener("click", () => {
+      const updated = loadPlaces().filter(x => x.id !== button.dataset.removePlace);
+      savePlaces(updated);
+      renderPlaces();
+    })
+  );
+}
+
+document.getElementById("showPlaces").addEventListener("click", renderPlaces);
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("hu-HU", {
+    weekday:"long",year:"numeric",month:"long",day:"numeric"
+  });
+
+renderAll();
+renderPlaces();
+</script>
+</body>
+</html>
