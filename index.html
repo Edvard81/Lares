@@ -1,678 +1,116 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101820">
-  <title>Lares 0.5</title>
+from pathlib import Path
+import zipfile, shutil, json, re
 
-  <style>
-    :root {
-      --bg: #101820;
-      --panel: #192630;
-      --panel2: #223440;
-      --text: #edf4f7;
-      --muted: #a8bbc5;
-      --accent: #54d6b0;
-      --danger: #ff7777;
-      --border: #304653;
-    }
+src = Path("/mnt/data/lares_inspect/Lares-main/index.html")
+html = src.read_text(encoding="utf-8")
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, sans-serif;
-      font-size: 16px;
-    }
-
-    header {
-      padding: 22px 18px 16px;
-      background: #14212b;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .brand {
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
-
-    .brand span {
-      color: var(--accent);
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 4px;
-    }
-
-    nav {
-      display: flex;
-      overflow-x: auto;
-      gap: 8px;
-      padding: 12px;
-      background: var(--bg);
-      position: sticky;
-      top: 91px;
-      z-index: 4;
-    }
-
-    button {
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 15px;
-      background: var(--panel2);
-      color: var(--text);
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    button.active,
-    button.primary {
-      background: var(--accent);
-      color: #10251f;
-      font-weight: 700;
-    }
-
-    main {
-      padding: 12px;
-      max-width: 760px;
-      margin: auto;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 17px;
-      margin-bottom: 14px;
-    }
-
-    h2 {
-      font-size: 21px;
-      margin: 0 0 14px;
-    }
-
-    h3 {
-      font-size: 17px;
-      margin: 0 0 10px;
-    }
-
-    p {
-      line-height: 1.5;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 16px;
-      border-radius: 14px;
-    }
-
-    .stat strong {
-      display: block;
-      color: var(--accent);
-      font-size: 26px;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      margin: 5px 0 12px;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #101b23;
-      color: var(--text);
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    label {
-      display: block;
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 7px;
-    }
-
-    .row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .row input {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .item {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      overflow-wrap: anywhere;
-    }
-
-    .item:last-child {
-      border-bottom: 0;
-    }
-
-    .item.done .item-text {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-
-    .item-text {
-      flex: 1;
-      overflow-wrap: anywhere;
-    }
-
-    .item small {
-      color: var(--muted);
-      display: block;
-      margin-top: 4px;
-    }
-
-    .delete {
-      background: transparent;
-      color: var(--danger);
-      padding: 8px;
-    }
-
-    .check {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    .empty {
-      color: var(--muted);
-      padding: 12px 0;
-    }
-
-    .assistant-box {
-      background: linear-gradient(140deg, #1c3c43, #192630);
-      border: 1px solid #356b69;
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .assistant-box h2 {
-      color: var(--accent);
-    }
-
-    .bubble {
-      background: #101b23;
-      border-radius: 12px;
-      padding: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .notice {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    footer {
-      padding: 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    @media (min-width: 600px) {
-      .stats {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <header>
-    <div class="brand">LARES<span>.</span></div>
-    <div class="subtitle">Személyi asszisztens · 0.5 prototípus</div>
-  </header>
-
-  <nav id="navigation">
-    <button class="active" data-page="home">🏠 Főoldal</button>
-    <button data-page="tasks">✅ Feladatok</button>
-    <button data-page="notes">📝 Jegyzetek</button>
-    <button data-page="projects">📁 Projektek</button>
-    <button data-page="shopping">🛒 Lista</button>
-  </nav>
-
-  <main>
-    <section class="page active" id="home">
-      <div class="assistant-box">
-        <h2>Üdv, Edvard!</h2>
-        <p>Lares vagyok. Ez az első prototípusom.</p>
-        <div class="bubble" id="dailyMessage">
-          Készen állok. Kezdjük a feladatokkal, jegyzetekkel vagy a projektekkel!
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <strong id="taskCount">0</strong>
-          <span>Nyitott feladat</span>
-        </div>
-        <div class="stat">
-          <strong id="noteCount">0</strong>
-          <span>Jegyzet</span>
-        </div>
-        <div class="stat">
-          <strong id="projectCount">0</strong>
-          <span>Projekt</span>
-        </div>
-        <div class="stat">
-          <strong id="shoppingCount">0</strong>
-          <span>Beszerzendő</span>
-        </div>
+# Add a backup/import panel on the home page, before the daily card.
+marker = '''      <div class="card">
+        <h3>📅 Mai nap</h3>'''
+insert = '''      <div class="card">
+        <h3>💾 Adatbiztonság</h3>
+        <p class="muted">Mentsd le a Lares adatait fájlba, mielőtt új funkciókat próbálunk ki vagy telefont cserélsz.</p>
+        <button class="primary" id="exportButton" type="button">Biztonsági mentés letöltése</button>
+        <label for="importFile">Korábbi Lares-mentés visszaállítása</label>
+        <input id="importFile" type="file" accept=".json,application/json">
+        <p class="notice">A visszaállítás a jelenlegi feladatokat, jegyzeteket, projekteket és bevásárlólistát lecseréli a kiválasztott mentés tartalmára. Előtte készíts egy friss mentést!</p>
+        <div id="backupStatus" class="notice" role="status" aria-live="polite"></div>
       </div>
 
       <div class="card">
-        <h3>📅 Mai nap</h3>
-        <p id="today"></p>
-        <p class="muted">A mai teendőidet a Feladatok menüpontban találod.</p>
-        <button class="primary" data-goto="tasks">Feladatok megnyitása</button>
-      </div>
+        <h3>📅 Mai nap</h3>'''
+assert marker in html
+html = html.replace(marker, insert, 1)
 
-      <div class="card">
-        <h3>💬 Beszélj Laresszel</h3>
-        <p class="muted">
-          Ez egy egyszerű, helyben működő prototípus.
-          Még nincs összekötve valódi mesterséges intelligenciával.
-        </p>
-        <label for="question">Mit szeretnél elintézni?</label>
-        <textarea id="question" placeholder="Például: Holnap ellenőrizzem a vetőmagot..."></textarea>
-        <button class="primary" id="askButton">Lares, segíts!</button>
-        <div id="answer" class="bubble" style="margin-top:12px;display:none"></div>
-      </div>
-    </section>
+# Insert backup/restore logic before the date initialization.
+marker2 = '''    const now = new Date();
 
-    <section class="page" id="tasks">
-      <div class="card">
-        <h2>✅ Feladatok</h2>
-        <form id="taskForm">
-          <label for="taskTitle">Feladat neve</label>
-          <input id="taskTitle" required maxlength="200" placeholder="Mit kell elintézni?">
-
-          <label for="taskDate">Határidő (nem kötelező)</label>
-          <input id="taskDate" type="date">
-
-          <button class="primary" type="submit">+ Feladat hozzáadása</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Feladatlista</h3>
-        <div id="taskList"></div>
-      </div>
-    </section>
-
-    <section class="page" id="notes">
-      <div class="card">
-        <h2>📝 Jegyzetek</h2>
-        <form id="noteForm">
-          <label for="noteTitle">Cím</label>
-          <input id="noteTitle" required maxlength="200" placeholder="Jegyzet címe">
-
-          <label for="noteBody">Tartalom</label>
-          <textarea id="noteBody" placeholder="Írd ide a gondolataidat..."></textarea>
-
-          <button class="primary" type="submit">+ Jegyzet mentése</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Mentett jegyzetek</h3>
-        <div id="noteList"></div>
-      </div>
-    </section>
-
-    <section class="page" id="projects">
-      <div class="card">
-        <h2>📁 Projektek</h2>
-        <form id="projectForm">
-          <label for="projectTitle">Projekt neve</label>
-          <input id="projectTitle" required maxlength="200" placeholder="Például: Lares fejlesztése">
-
-          <label for="projectDescription">Leírás</label>
-          <textarea id="projectDescription" placeholder="Mi a cél?"></textarea>
-
-          <button class="primary" type="submit">+ Projekt létrehozása</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Aktív projektek</h3>
-        <div id="projectList"></div>
-      </div>
-    </section>
-
-    <section class="page" id="shopping">
-      <div class="card">
-        <h2>🛒 Bevásárlólista</h2>
-        <form id="shoppingForm">
-          <label for="shoppingTitle">Mit kell megvenni?</label>
-          <div class="row">
-            <input id="shoppingTitle" required maxlength="200" placeholder="Például: kenyér">
-            <button class="primary" type="submit">+</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Beszerzendő dolgok</h3>
-        <div id="shoppingList"></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    Lares 0.5 · Az adatok ezen a böngészőn tárolódnak.
-    Készíts biztonsági másolatot!
-  </footer>
-
-  <script>
-    "use strict";
-
-    const STORAGE_KEY = "lares05_data_v1";
-
-    const emptyData = {
-      tasks: [],
-      notes: [],
-      projects: [],
-      shopping: []
-    };
-
-    function loadData() {
+    document.getElementById("today").textContent ='''
+insert2 = '''    // Biztonsági mentés: a négy adatkategóriát JSON-fájlba exportálja.
+    document.getElementById("exportButton").addEventListener("click", () => {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return structuredClone(emptyData);
-
-        const parsed = JSON.parse(saved);
-
-        return {
-          tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
-          notes: Array.isArray(parsed.notes) ? parsed.notes : [],
-          projects: Array.isArray(parsed.projects) ? parsed.projects : [],
-          shopping: Array.isArray(parsed.shopping) ? parsed.shopping : []
+        const backup = {
+          app: "Lares",
+          version: "0.5",
+          exportedAt: new Date().toISOString(),
+          data: data
         };
+        const blob = new Blob([JSON.stringify(backup, null, 2)], {
+          type: "application/json"
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+        link.href = url;
+        link.download = `lares-mentes-${stamp}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        document.getElementById("backupStatus").textContent =
+          "A mentés letöltését elindítottam. Ellenőrizd a telefon Letöltések mappáját.";
       } catch (error) {
-        return structuredClone(emptyData);
+        document.getElementById("backupStatus").textContent =
+          "Nem sikerült elkészíteni a mentést. Próbáld újra.";
       }
-    }
+    });
 
-    let data = loadData();
+    document.getElementById("importFile").addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      const status = document.getElementById("backupStatus");
+      if (!file) return;
 
-    function saveData() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        renderAll();
+        const parsed = JSON.parse(await file.text());
+        const imported = parsed && parsed.data ? parsed.data : parsed;
+
+        const valid =
+          imported &&
+          Array.isArray(imported.tasks) &&
+          Array.isArray(imported.notes) &&
+          Array.isArray(imported.projects) &&
+          Array.isArray(imported.shopping);
+
+        if (!valid) {
+          throw new Error("invalid backup");
+        }
+
+        if (!confirm("Biztosan visszaállítod ezt a mentést? A mostani Lares-adatok lecserélődnek.")) {
+          status.textContent = "A visszaállítást megszakítottam.";
+          event.target.value = "";
+          return;
+        }
+
+        data = {
+          tasks: imported.tasks,
+          notes: imported.notes,
+          projects: imported.projects,
+          shopping: imported.shopping
+        };
+        saveData();
+        status.textContent = "A mentés visszaállítása sikerült.";
       } catch (error) {
-        alert("Nem sikerült menteni az adatokat. Ellenőrizd a böngésző tárhelyét.");
+        status.textContent =
+          "Ezt a fájlt nem tudtam Lares-mentésként beolvasni. Az adataid nem változtak.";
+      } finally {
+        event.target.value = "";
       }
-    }
-
-    function makeId() {
-      return Date.now().toString(36) +
-        Math.random().toString(36).slice(2, 9);
-    }
-
-    function safeText(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function showPage(pageName) {
-      document.querySelectorAll(".page").forEach(page => {
-        page.classList.toggle("active", page.id === pageName);
-      });
-
-      document.querySelectorAll("#navigation button").forEach(button => {
-        button.classList.toggle("active", button.dataset.page === pageName);
-      });
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    document.querySelectorAll("#navigation button").forEach(button => {
-      button.addEventListener("click", () => showPage(button.dataset.page));
-    });
-
-    document.querySelectorAll("[data-goto]").forEach(button => {
-      button.addEventListener("click", () => showPage(button.dataset.goto));
-    });
-
-    function renderItems(containerId, items, type, contentFunction) {
-      const container = document.getElementById(containerId);
-
-      if (items.length === 0) {
-        container.innerHTML = '<div class="empty">Még nincs itt semmi.</div>';
-        return;
-      }
-
-      container.innerHTML = items.map(item => {
-        return contentFunction(item, type);
-      }).join("");
-
-      container.querySelectorAll("[data-delete]").forEach(button => {
-        button.addEventListener("click", () => {
-          const { type: itemType, id } = button.dataset;
-          if (!confirm("Biztosan törlöd ezt az elemet?")) return;
-
-          data[itemType] = data[itemType].filter(item => item.id !== id);
-          saveData();
-        });
-      });
-
-      container.querySelectorAll("[data-toggle]").forEach(input => {
-        input.addEventListener("change", () => {
-          const { type: itemType, id } = input.dataset;
-          const item = data[itemType].find(item => item.id === id);
-
-          if (item) {
-            item.done = input.checked;
-            saveData();
-          }
-        });
-      });
-    }
-
-    function renderAll() {
-      renderItems("taskList", data.tasks, "tasks", item => `
-        <div class="item ${item.done ? "done" : ""}">
-          <div class="row">
-            <input class="check" type="checkbox"
-              data-toggle data-type="tasks" data-id="${safeText(item.id)}"
-              ${item.done ? "checked" : ""} aria-label="Feladat kész">
-            <div class="item-text">${safeText(item.title)}
-              ${item.date ? `<small>Határidő: ${safeText(item.date)}</small>` : ""}
-            </div>
-            <button class="delete" data-delete data-type="tasks"
-              data-id="${safeText(item.id)}" aria-label="Törlés">✕</button>
-          </div>
-        </div>
-      `);
-
-      renderItems("noteList", data.notes, "notes", item => `
-        <div class="item">
-          <div class="row">
-            <div class="item-text">
-              <strong>${safeText(item.title)}</strong>
-              <small>${safeText(item.created)}</small>
-              <p>${safeText(item.body).replaceAll("\n", "<br>")}</p>
-            </div>
-            <button class="delete" data-delete data-type="notes"
-              data-id="${safeText(item.id)}" aria-label="Törlés">✕</button>
-          </div>
-        </div>
-      `);
-
-      renderItems("projectList", data.projects, "projects", item => `
-        <div class="item">
-          <div class="row">
-            <div class="item-text">
-              <strong>${safeText(item.title)}</strong>
-              <p>${safeText(item.description).replaceAll("\n", "<br>")}</p>
-              <small>Létrehozva: ${safeText(item.created)}</small>
-            </div>
-            <button class="delete" data-delete data-type="projects"
-              data-id="${safeText(item.id)}" aria-label="Törlés">✕</button>
-          </div>
-        </div>
-      `);
-
-      renderItems("shoppingList", data.shopping, "shopping", item => `
-        <div class="item ${item.done ? "done" : ""}">
-          <div class="row">
-            <input class="check" type="checkbox"
-              data-toggle data-type="shopping" data-id="${safeText(item.id)}"
-              ${item.done ? "checked" : ""} aria-label="Beszerzés kész">
-            <div class="item-text">${safeText(item.title)}</div>
-            <button class="delete" data-delete data-type="shopping"
-              data-id="${safeText(item.id)}" aria-label="Törlés">✕</button>
-          </div>
-        </div>
-      `);
-
-      document.getElementById("taskCount").textContent =
-        data.tasks.filter(item => !item.done).length;
-
-      document.getElementById("noteCount").textContent = data.notes.length;
-      document.getElementById("projectCount").textContent = data.projects.length;
-
-      document.getElementById("shoppingCount").textContent =
-        data.shopping.filter(item => !item.done).length;
-    }
-
-    document.getElementById("taskForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      data.tasks.unshift({
-        id: makeId(),
-        title: document.getElementById("taskTitle").value.trim(),
-        date: document.getElementById("taskDate").value,
-        done: false
-      });
-
-      saveData();
-      event.target.reset();
-    });
-
-    document.getElementById("noteForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      data.notes.unshift({
-        id: makeId(),
-        title: document.getElementById("noteTitle").value.trim(),
-        body: document.getElementById("noteBody").value.trim(),
-        created: new Date().toLocaleString("hu-HU")
-      });
-
-      saveData();
-      event.target.reset();
-    });
-
-    document.getElementById("projectForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      data.projects.unshift({
-        id: makeId(),
-        title: document.getElementById("projectTitle").value.trim(),
-        description: document.getElementById("projectDescription").value.trim(),
-        created: new Date().toLocaleDateString("hu-HU")
-      });
-
-      saveData();
-      event.target.reset();
-    });
-
-    document.getElementById("shoppingForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      data.shopping.unshift({
-        id: makeId(),
-        title: document.getElementById("shoppingTitle").value.trim(),
-        done: false
-      });
-
-      saveData();
-      event.target.reset();
-    });
-
-    document.getElementById("askButton").addEventListener("click", () => {
-      const question = document.getElementById("question").value.trim();
-      const answer = document.getElementById("answer");
-
-      if (!question) {
-        alert("Írd be, miben segítsek!");
-        return;
-      }
-
-      answer.style.display = "block";
-      answer.textContent =
-        "Ezt feljegyeztem a beszélgetéshez:\n\n" +
-        question +
-        "\n\nA Lares jelenlegi változata még nem használ AI-modellt, " +
-        "ezért nem tud valódi választ adni. A következő fejlesztési " +
-        "lépés a mesterséges intelligencia biztonságos bekötése.";
     });
 
     const now = new Date();
 
-    document.getElementById("today").textContent =
-      now.toLocaleDateString("hu-HU", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
+    document.getElementById("today").textContent ='''
+assert marker2 in html
+html = html.replace(marker2, insert2, 1)
 
-    renderAll();
-  </script>
-</body>
-</html>
+outdir = Path("/mnt/data/Lares_05_backup_update")
+outdir.mkdir(exist_ok=True)
+(outdir / "index.html").write_text(html, encoding="utf-8")
+zip_path = Path("/mnt/data/Lares_05_backup_update.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    zf.write(outdir / "index.html", arcname="index.html")
+
+print("Elkészült a Lares 0.5 biztonsági mentés funkcióval bővített változata:")
+print(f"- HTML: {outdir / 'index.html'}")
+print(f"- ZIP: {zip_path}")
+print("A meglévő kód érintetlen maradt; ez egy külön fejlesztési változat.")
