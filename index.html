@@ -4,230 +4,1540 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101820">
-<title>Lares 0.8</title>
+<meta name="description" content="Lares személyi asszisztens">
+<title>Lares 0.9</title>
+
 <style>
-:root{--bg:#101820;--panel:#192630;--panel2:#223440;--text:#edf4f7;--muted:#a8bbc5;--accent:#54d6b0;--danger:#ff7777;--border:#304653}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}
-header{padding:20px;background:#14212b;border-bottom:1px solid var(--border)}.brand{font-size:27px;font-weight:800}.brand span{color:var(--accent)}.subtitle{color:var(--muted);font-size:13px}
-nav{display:flex;gap:8px;overflow-x:auto;padding:10px;position:sticky;top:0;background:var(--bg);z-index:5}
-button{border:0;border-radius:10px;padding:12px;background:var(--panel2);color:var(--text);font-size:15px;cursor:pointer}button.primary{background:var(--accent);color:#10251f;font-weight:bold}button.active{background:var(--accent);color:#10251f}
-main{max-width:760px;margin:auto;padding:12px}.page{display:none}.page.active{display:block}
-.card,.stat{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:16px;margin-bottom:14px}
-h2{font-size:21px}h3{font-size:17px}p{line-height:1.5}.muted,label,.notice{color:var(--muted)}label{display:block;font-size:14px;margin-top:8px}
-input,textarea,select{display:block;width:100%;margin:6px 0 12px;padding:12px;border:1px solid var(--border);border-radius:9px;background:#101b23;color:var(--text);font:inherit}
-textarea{min-height:90px}.row{display:flex;gap:8px;align-items:center}.row input{flex:1;min-width:0}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}.stat strong{display:block;color:var(--accent);font-size:25px}
-.item{padding:12px 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}.item.done .item-text{text-decoration:line-through;color:var(--muted)}.item-text{flex:1}.item small{display:block;color:var(--muted)}.check{width:20px}.delete{color:var(--danger);background:transparent}
-.bubble{background:#101b23;padding:14px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}.map-actions{display:flex;gap:8px;flex-wrap:wrap}.map-actions button{flex:1}.notice{font-size:12px;line-height:1.5}.status{margin-top:12px;white-space:pre-wrap}#question{min-height:110px}#answer{line-height:1.6}
-footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}}
+:root {
+  --bg:#101820;
+  --panel:#192630;
+  --panel2:#223440;
+  --text:#edf4f7;
+  --muted:#a8bbc5;
+  --accent:#54d6b0;
+  --danger:#ff7777;
+  --border:#304653;
+}
+* { box-sizing:border-box }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+}
+header {
+  padding:18px;
+  background:#14212b;
+  border-bottom:1px solid var(--border);
+}
+.brand { font-size:27px;font-weight:800 }
+.brand span { color:var(--accent) }
+.subtitle { color:var(--muted);font-size:13px }
+nav {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:10px;
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:5;
+}
+button {
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:15px;
+  cursor:pointer;
+}
+button.primary,.active {
+  background:var(--accent);
+  color:#10251f;
+  font-weight:bold;
+}
+button:disabled { opacity:.5 }
+main { max-width:760px;margin:auto;padding:12px }
+.page { display:none }
+.page.active { display:block }
+.card,.stat {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:16px;
+  margin-bottom:14px;
+}
+h2 { font-size:21px }
+h3 { font-size:17px }
+p { line-height:1.5 }
+.muted,label,.notice { color:var(--muted) }
+label {
+  display:block;
+  font-size:14px;
+  margin-top:8px;
+}
+input,textarea,select {
+  display:block;
+  width:100%;
+  margin:6px 0 12px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#101b23;
+  color:var(--text);
+  font:inherit;
+}
+textarea { min-height:90px }
+.row { display:flex;gap:8px;align-items:center }
+.row input { flex:1;min-width:0 }
+.stats {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+.stat strong {
+  display:block;
+  color:var(--accent);
+  font-size:25px;
+}
+.item {
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  overflow-wrap:anywhere;
+}
+.item.done .item-text {
+  text-decoration:line-through;
+  color:var(--muted);
+}
+.item-text { flex:1 }
+.item small {
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+.check { width:20px }
+.delete { color:var(--danger);background:transparent }
+.bubble {
+  background:#101b23;
+  padding:14px;
+  border-radius:10px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.6;
+}
+.map-actions {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.map-actions button { flex:1 }
+.notice { font-size:12px;line-height:1.5 }
+.status { margin-top:12px;white-space:pre-wrap }
+#question { min-height:110px }
+footer {
+  text-align:center;
+  padding:20px;
+  color:var(--muted);
+  font-size:12px;
+}
+.checkline {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin:12px 0;
+}
+.checkline input { width:20px;margin:0 }
+hr { border:0;border-top:1px solid var(--border);margin:20px 0 }
+@media(min-width:600px) {
+  .stats { grid-template-columns:repeat(4,1fr) }
+}
 </style>
 </head>
+
 <body>
-<header><div class="brand">LARES<span>.</span></div><div class="subtitle">Személyi asszisztens · 0.8 térképes bevásárlási fejlesztés</div></header>
+<header>
+  <div class="brand">LARES<span>.</span></div>
+  <div class="subtitle">Személyi asszisztens · 0.9 AI-előkészítés</div>
+</header>
+
 <nav id="navigation">
-<button class="active" data-page="home">🏠 Főoldal</button><button data-page="tasks">✅ Feladatok</button><button data-page="notes">📝 Jegyzetek</button><button data-page="projects">📁 Projektek</button><button data-page="shopping">🛒 Lista</button><button data-page="map">📍 Térkép</button>
+  <button class="active" data-page="home">🏠 Főoldal</button>
+  <button data-page="tasks">✅ Feladatok</button>
+  <button data-page="notes">📝 Jegyzetek</button>
+  <button data-page="projects">📁 Projektek</button>
+  <button data-page="shopping">🛒 Lista</button>
+  <button data-page="map">📍 Térkép</button>
+  <button data-page="settings">⚙️ Beállítások</button>
 </nav>
+
 <main>
+
 <section class="page active" id="home">
-<div class="card"><h2>Üdv, Edvard!</h2><p>Mondd el, mit szeretnél. A Lares megpróbálja a megfelelő helyre tenni.</p><div id="dailyMessage" class="bubble">Készen állok.</div></div>
-<div class="stats">
-<div class="stat"><strong id="taskCount">0</strong>Nyitott feladat</div><div class="stat"><strong id="noteCount">0</strong>Jegyzet</div><div class="stat"><strong id="projectCount">0</strong>Projekt</div><div class="stat"><strong id="shoppingCount">0</strong>Beszerzendő</div>
-</div>
-<div class="card"><h3>📅 Mai nap</h3><p id="today"></p><button class="primary" data-goto="tasks">Feladatok megnyitása</button></div>
-<div class="card"><h2>💬 Lares központ</h2><p class="muted">Írd le egy mondatban, mit szeretnél rögzíteni vagy elintézni.</p>
-<textarea id="question" placeholder="Például: Kedden fogorvoshoz kell mennem." maxlength="1500"></textarea><button class="primary" id="askButton">Lares, intézd el!</button>
-<div id="answer" class="bubble" style="display:none;margin-top:12px" aria-live="polite"></div>
-<p class="notice">Ez a változat szabályalapú szövegfelismerést használ, nem valódi AI-t. A műveletek a böngésző helyi tárhelyére mentődnek.</p></div>
+  <div class="card">
+    <h2>Üdv, Edvard!</h2>
+    <p>A Lares a rendelkezésre álló funkciókkal segít a feladatok és az adatok kezelésében.</p>
+    <div id="dailyMessage" class="bubble">Készen állok.</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><strong id="taskCount">0</strong>Nyitott feladat</div>
+    <div class="stat"><strong id="noteCount">0</strong>Jegyzet</div>
+    <div class="stat"><strong id="projectCount">0</strong>Projekt</div>
+    <div class="stat"><strong id="shoppingCount">0</strong>Beszerzendő</div>
+  </div>
+
+  <div class="card">
+    <h3>📅 Mai nap</h3>
+    <p id="today"></p>
+    <button class="primary" data-goto="tasks">Feladatok</button>
+  </div>
+
+  <div class="card">
+    <h2>💬 Lares központ</h2>
+    <p class="muted">
+      Írd le, mit szeretnél. Ha beállítottad az AI-kapcsolatot,
+      a Lares megpróbálja értelmezni a kérésedet.
+    </p>
+
+    <textarea id="question"
+      placeholder="Például: Holnap vegyek tejet, és emlékeztess a fogorvosra pénteken."
+      maxlength="3000"></textarea>
+
+    <button class="primary" id="askButton">Lares, intézd el!</button>
+
+    <div id="answer" class="bubble"
+      style="display:none;margin-top:12px"
+      aria-live="polite"></div>
+
+    <p class="notice" id="aiStatus">
+      AI nincs beállítva. A helyi, szabályalapú funkciók ettől még működnek.
+    </p>
+  </div>
 </section>
-<section class="page" id="tasks"><div class="card"><h2>✅ Feladatok</h2><form id="taskForm"><label>Feladat neve</label><input id="taskTitle" required maxlength="200"><label>Határidő</label><input id="taskDate" type="date"><button class="primary">+ Feladat hozzáadása</button></form></div><div class="card"><h3>Feladatlista</h3><div id="taskList"></div></div></section>
-<section class="page" id="notes"><div class="card"><h2>📝 Jegyzetek</h2><form id="noteForm"><label>Cím</label><input id="noteTitle" required maxlength="200"><label>Tartalom</label><textarea id="noteBody"></textarea><button class="primary">+ Jegyzet mentése</button></form></div><div class="card"><h3>Mentett jegyzetek</h3><div id="noteList"></div></div></section>
-<section class="page" id="projects"><div class="card"><h2>📁 Projektek</h2><form id="projectForm"><label>Projekt neve</label><input id="projectTitle" required maxlength="200"><label>Leírás</label><textarea id="projectDescription"></textarea><button class="primary">+ Projekt létrehozása</button></form></div><div class="card"><h3>Aktív projektek</h3><div id="projectList"></div></div></section>
-<section class="page" id="shopping"><div class="card"><h2>🛒 Bevásárlólista</h2><form id="shoppingForm"><label>Mit kell megvenni?</label><input id="shoppingTitle" required maxlength="200"><button class="primary">+ Hozzáadás</button></form></div><div class="card"><h3>Beszerzendő dolgok</h3><div id="shoppingList"></div></div></section>
-<section class="page" id="map"><div class="card"><h2>📍 Térképes emlékeztetők</h2><p class="muted">Itt tárolhatod, hogy mit szeretnél elintézni egy adott helyen.</p>
-<label>Mire emlékeztessen a Lares?</label><input id="placeTask" maxlength="200" placeholder="Például: vizet kell vennem">
-<label>Hol szeretnéd elintézni?</label><select id="placeTarget"><option value="any">Bármelyik megfelelő bolt</option><option value="Lidl">Csak Lidl</option><option value="Idea">Csak Idea</option><option value="Maxi">Csak Maxi</option><option value="SP">Csak SP</option><option value="pharmacy">Gyógyszertár</option><option value="custom">Saját hely megadása</option></select>
-<label>Saját hely neve vagy címe</label><input id="customPlace" maxlength="200" placeholder="Például: Lidl Ada">
-<div class="map-actions"><button class="primary" type="button" id="findPlace">Hely keresése</button><button type="button" id="savePlace">Emlékeztető mentése</button></div>
-<div class="map-actions" style="margin-top:8px"><button type="button" id="nearbyPlaces">Közeli boltok</button><button type="button" id="showPlaces">Mentett emlékeztetők</button></div>
-<div id="placeStatus" class="status" aria-live="polite"></div><div id="placeList" class="status"></div>
-<p class="notice">A Google Térkép keresést nyit meg. A mentés önmagában nem kapcsol be háttérben működő helyfigyelést vagy automatikus telefonos értesítést.</p></div></section>
-</main><footer>Lares 0.8 · Helyi böngészőtárhely</footer>
+
+<section class="page" id="tasks">
+  <div class="card">
+    <h2>✅ Feladatok</h2>
+    <form id="taskForm">
+      <label>Feladat neve</label>
+      <input id="taskTitle" required maxlength="200">
+      <label>Határidő</label>
+      <input id="taskDate" type="date">
+      <button class="primary">+ Feladat hozzáadása</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Feladatlista</h3>
+    <div id="taskList"></div>
+  </div>
+</section>
+
+<section class="page" id="notes">
+  <div class="card">
+    <h2>📝 Jegyzetek</h2>
+    <form id="noteForm">
+      <label>Cím</label>
+      <input id="noteTitle" required maxlength="200">
+      <label>Tartalom</label>
+      <textarea id="noteBody" maxlength="10000"></textarea>
+      <button class="primary">+ Jegyzet mentése</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Mentett jegyzetek</h3>
+    <div id="noteList"></div>
+  </div>
+</section>
+
+<section class="page" id="projects">
+  <div class="card">
+    <h2>📁 Projektek</h2>
+    <form id="projectForm">
+      <label>Projekt neve</label>
+      <input id="projectTitle" required maxlength="200">
+      <label>Leírás</label>
+      <textarea id="projectDescription" maxlength="5000"></textarea>
+      <button class="primary">+ Projekt létrehozása</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Aktív projektek</h3>
+    <div id="projectList"></div>
+  </div>
+</section>
+
+<section class="page" id="shopping">
+  <div class="card">
+    <h2>🛒 Bevásárlólista</h2>
+    <form id="shoppingForm">
+      <label>Mit kell megvenni?</label>
+      <input id="shoppingTitle" required maxlength="200">
+      <button class="primary">+ Hozzáadás</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Beszerzendő dolgok</h3>
+    <div id="shoppingList"></div>
+  </div>
+</section>
+
+<section class="page" id="map">
+  <div class="card">
+    <h2>📍 Térképes emlékeztetők</h2>
+    <p class="muted">
+      A mentett emlékeztetők jelenleg nem indítanak automatikus,
+      háttérben működő helyfigyelést.
+    </p>
+
+    <label>Mire emlékeztessen a Lares?</label>
+    <input id="placeTask" maxlength="200"
+      placeholder="Például: vizet kell vennem">
+
+    <label>Hol szeretnéd elintézni?</label>
+    <select id="placeTarget">
+      <option value="any">Bármelyik megfelelő bolt</option>
+      <option value="Lidl">Csak Lidl</option>
+      <option value="Idea">Csak Idea</option>
+      <option value="Maxi">Csak Maxi</option>
+      <option value="SP">Csak SP</option>
+      <option value="pharmacy">Gyógyszertár</option>
+      <option value="custom">Saját hely megadása</option>
+    </select>
+
+    <label>Saját hely neve vagy címe</label>
+    <input id="customPlace" maxlength="200"
+      placeholder="Például: Lidl Ada">
+
+    <div class="map-actions">
+      <button class="primary" type="button" id="findPlace">Hely keresése</button>
+      <button type="button" id="savePlace">Emlékeztető mentése</button>
+    </div>
+
+    <div class="map-actions" style="margin-top:8px">
+      <button type="button" id="nearbyPlaces">Közeli boltok</button>
+      <button type="button" id="showPlaces">Mentett emlékeztetők</button>
+    </div>
+
+    <div id="placeStatus" class="status" aria-live="polite"></div>
+    <div id="placeList" class="status"></div>
+  </div>
+</section>
+
+<section class="page" id="settings">
+  <div class="card">
+    <h2>⚙️ Lares beállításai</h2>
+
+    <h3>🤖 Felhőalapú AI</h3>
+    <p class="notice">
+      Ez a változat közvetlenül a Gemini API-t hívja.
+      Ehhez API-kulcs kell. A kulcsot ne tedd a GitHub-kódba!
+      A böngészőből történő közvetlen API-hívás nem tekinthető
+      biztonságos, végleges megoldásnak.
+    </p>
+
+    <label>AI-modell neve</label>
+    <input id="aiModel" maxlength="100"
+      value="gemini-2.5-flash-lite"
+      placeholder="Például: gemini-2.5-flash-lite">
+
+    <label>Gemini API-kulcs</label>
+    <input id="aiKey" type="password" autocomplete="off"
+      placeholder="Illeszd be az API-kulcsot">
+
+    <label class="checkline">
+      <input id="rememberKey" type="checkbox">
+      <span>API-kulcs megjegyzése ezen a böngészőn</span>
+    </label>
+
+    <div class="map-actions">
+      <button class="primary" id="saveAI" type="button">AI-beállítások mentése</button>
+      <button id="testAI" type="button">Kapcsolat tesztelése</button>
+    </div>
+
+    <div id="aiSettingsStatus" class="status" aria-live="polite"></div>
+
+    <hr>
+
+    <h3>💾 Adatok és biztonsági mentés</h3>
+    <p class="notice">
+      A jelenlegi változat a böngésző helyi tárhelyét használja.
+      A memóriakártyára történő közvetlen, tartós adattárolás még nincs
+      beépítve. Biztonsági másolatot fájlba tudsz exportálni,
+      majd később vissza tudod tölteni.
+    </p>
+
+    <button class="primary" id="exportData" type="button">
+      Adatok exportálása
+    </button>
+
+    <label>Biztonsági másolat visszaállítása</label>
+    <input id="importFile" type="file" accept=".json,application/json">
+
+    <button id="importData" type="button">Mentés visszaállítása</button>
+
+    <hr>
+
+    <h3>🧠 Jelenlegi tárolás</h3>
+    <p id="storageInfo" class="notice"></p>
+
+    <button id="clearAIKey" type="button">AI-kulcs törlése</button>
+  </div>
+</section>
+
+</main>
+
+<footer>Lares 0.9 · Kísérleti webes változat</footer>
+
 <script>
 "use strict";
-const STORAGE_KEY="lares05_data_v1";
-const PLACE_KEY="lares_place_reminders_v1";
-function loadData(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");return{tasks:Array.isArray(p.tasks)?p.tasks:[],notes:Array.isArray(p.notes)?p.notes:[],projects:Array.isArray(p.projects)?p.projects:[],shopping:Array.isArray(p.shopping)?p.shopping:[]}}catch{return{tasks:[],notes:[],projects:[],shopping:[]}}}
-let data=loadData();
-function makeId(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function safeText(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));renderAll()}catch{alert("Nem sikerült menteni. Ellenőrizd a böngésző tárhelyét.")}}
-function normalize(t){return String(t||"").toLocaleLowerCase("hu-HU").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[!?.,;:]/g," ").replace(/\s+/g," ").trim()}
-function todayISO(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
-function dateISO(d){return[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
-function addDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d}
-function parseDate(text){
- const n=normalize(text),today=new Date();today.setHours(0,0,0,0);
- if(/\bholnaputan\b/.test(n))return dateISO(addDays(today,2));
- if(/\bholnap\b/.test(n))return dateISO(addDays(today,1));
- if(/\bma\b/.test(n))return dateISO(today);
- const iso=String(text).match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
- if(iso){const d=new Date(+iso[1],+iso[2]-1,+iso[3]);if(d.getFullYear()===+iso[1]&&d.getMonth()===+iso[2]-1&&d.getDate()===+iso[3])return dateISO(d)}
- const weekdays={vasarnap:0,hetfo:1,kedd:2,szerda:3,csutortok:4,pentek:5,szombat:6};
- for(const [name,num] of Object.entries(weekdays)){if(new RegExp("\\b"+name+"[a-z]*\\b").test(n)){let diff=(num-today.getDay()+7)%7;if(diff===0)diff=7;return dateISO(addDays(today,diff))}}
- const hu=String(text).match(/\b(\d{1,2})[./](\d{1,2})[./]?(20\d{2})?\b/);
- if(hu){const day=+hu[1],month=+hu[2];let year=hu[3]?+hu[3]:today.getFullYear();let d=new Date(year,month-1,day);if(d.getDate()!==day||d.getMonth()!==month-1)return"";if(!hu[3]&&d<today){year++;d=new Date(year,month-1,day)}return dateISO(d)}
- return""
-}
-function dateLabel(v){if(!v)return"";const p=v.split("-").map(Number);return new Date(p[0],p[1]-1,p[2]).toLocaleDateString("hu-HU",{year:"numeric",month:"long",day:"numeric"})}
-function showPage(name){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));document.querySelectorAll("#navigation button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));window.scrollTo({top:0,behavior:"smooth"})}
-document.querySelectorAll("#navigation button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.goto)));
 
-function loadPlaces(){try{const p=JSON.parse(localStorage.getItem(PLACE_KEY)||"[]");return Array.isArray(p)?p:[]}catch{return[]}}
-function savePlaces(items){try{localStorage.setItem(PLACE_KEY,JSON.stringify(items));return true}catch{return false}}
-function detectStore(original){
- const n=normalize(original);
- if(/\blidl(?:ben|ban|be|ba|bol|bol|hez|hoz|nel|nal)?\b/.test(n))return"Lidl";
- if(/\bidea(?:ban|ben|ba|be|bol|hez|hoz|nal|nel)?\b/.test(n))return"Idea";
- if(/\bmaxi(?:ban|ben|ba|be|bol|hez|hoz|nal|nel)?\b/.test(n))return"Maxi";
- if(/\bsp\b|\bs p\b/.test(n))return"SP";
- if(/\b(gyogyszertar|patika)\b/.test(n))return"pharmacy";
- return""
-}
-function detectShopCategory(item){
- const n=normalize(item);
- if(/\b(kenyer|kenyeret|zsemle|zsemlet|kifli|kiflit|peksutemeny|pekseg)\b/.test(n))return{category:"bakery",label:"Pékség vagy élelmiszerbolt",query:"pékség"};
- if(/\b(tej|tejet|tojas|tojást|cukor|cukrot|liszt|lisztet|olaj|olajat|vaj|sajt|hus|viz|vizet|kenyer|kenyeret)\b/.test(n))return{category:"supermarket",label:"Élelmiszerbolt vagy szupermarket",query:"szupermarket"};
- if(/\b(mosopor|mosópor|oblito|öblítő|mosogatoszer|tisztitoszer|sampon|tusfurdo|szappan|dezodor)\b/.test(n))return{category:"drugstore",label:"Drogéria vagy szupermarket",query:"drogéria"};
- if(/\b(benzin|benzint|gazolaj|gázolaj|uzemanyag|üzemanyag)\b/.test(n))return{category:"fuel",label:"Benzinkút",query:"benzinkút"};
- if(/\b(csavar|csavart|szeg|furo|fúrót|szerszam|szerszám|festek|festék|cement)\b/.test(n))return{category:"hardware",label:"Vas- és barkácsbolt",query:"vasbolt barkácsbolt"};
- if(/\b(gyogyszer|gyógyszer|tabletta|krem|krém|kotosszer|kötözőszer|vitamin)\b/.test(n))return{category:"pharmacy",label:"Gyógyszertár",query:"gyógyszertár"};
- return{category:"supermarket",label:"Élelmiszerbolt vagy szupermarket",query:"szupermarket"}
-}
-function extractShoppingItem(original){
- let text=String(original||"").trim();
- text=text.replace(/^(lares[\s,]*)/i,"")
- .replace(/\b(a|az)\s+(lidl|idea|maxi|sp)\s*(ben|ban|be|ba|hez|hoz|nel|nal)\b/gi," ")
- .replace(/\b(lidl|idea|maxi|sp)\s*(ben|ban|be|ba|bol|hoz|nel|nal)\b/gi," ")
- .replace(/\b(a|az)\s+(lidl|idea|maxi|sp)\b/gi," ")
- .replace(/\b(gyogyszertarban|patikaban|gyógyszertárban|patikába)\b/gi," ")
- .replace(/\b(holnaputan|holnap|ma)\b/gi," ")
- .replace(/\b(kellene vennem|kell vennem|kell venni|vennem kell|vegyek|vasaroljak|vásároljak|vasarolni|vásárolni|meg kell vennem|megvennem|megvenni|beszereznem|beszerezni|venni)\b/gi," ")
- .replace(/\b(kellene|kell|elfogyott|elfogy|vegyél|vegyel|emlékeztess|emlekeztess|jegyezd fel|írd fel|ird fel)\b/gi," ")
- .replace(/[,.!?]/g," ").replace(/\s+/g," ").trim();
- return text||"Bevásárlás"
-}
-function addShopping(title,explicitStore=""){
- const shop=detectShopCategory(title);
- const item={id:makeId(),title,done:false,storeMode:explicitStore?"fixed":"auto",targetStore:explicitStore||"",category:shop.category,categoryLabel:shop.label,mapQuery:explicitStore||shop.query};
- data.shopping.unshift(item);
- saveData();
- const target=explicitStore||"any";
- const reminderQuery=explicitStore||shop.query;
- addPlaceReminder("Vásárlás: "+title,target,"",reminderQuery);
- return explicitStore?explicitStore+" (csak ez az üzletlánc)":shop.label
-}
-function addPlaceReminder(task,target,custom="",queryOverride=""){
- const items=loadPlaces();
- items.unshift({id:makeId(),task,target,custom,query:queryOverride||(target==="custom"?custom:target==="any"?"bolt":target),created:new Date().toISOString()});
- return savePlaces(items)
-}
-function openMap(query,nearby=false){
- const search=nearby?"boltok a közelemben":query;
- const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(search);
- window.open(url,"_blank","noopener")
-}
-function getPlaceDetails(){
- const task=document.getElementById("placeTask").value.trim(),target=document.getElementById("placeTarget").value,custom=document.getElementById("customPlace").value.trim();
- let query;if(target==="custom")query=custom;else if(target==="pharmacy")query="gyógyszertár";else if(target==="any")query=detectShopCategory(task).query;else query=target;
- return{task,target,custom,query}
-}
-function renderItems(containerId,items,makeHTML){
- const box=document.getElementById(containerId);
- if(!items.length){box.innerHTML='<div class="muted">Még nincs itt semmi.</div>';return}
- box.innerHTML=items.map(makeHTML).join("");
- box.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{if(!confirm("Biztosan törlöd ezt az elemet?"))return;const type=b.dataset.type,id=b.dataset.id;data[type]=data[type].filter(x=>x.id!==id);saveData()}));
- box.querySelectorAll("[data-toggle]").forEach(input=>input.addEventListener("change",()=>{const item=data[input.dataset.type].find(x=>x.id===input.dataset.id);if(item){item.done=input.checked;saveData()}}));
- box.querySelectorAll("[data-shop-map]").forEach(button=>button.addEventListener("click",()=>{
-  const item=data.shopping.find(x=>x.id===button.dataset.shopMap);if(!item)return;
-  const query=item.storeMode==="fixed"&&item.targetStore?item.targetStore:(item.mapQuery||detectShopCategory(item.title).query);
-  openMap(query);showPage("map");document.getElementById("placeStatus").textContent="Térképes keresés: "+query+". Ellenőrizd a találatok között a megfelelő üzletet."
- }))
-}
-function renderAll(){
- renderItems("taskList",data.tasks,item=>`<div class="item ${item.done?"done":""}"><div class="row"><input class="check" type="checkbox" data-toggle data-type="tasks" data-id="${safeText(item.id)}" ${item.done?"checked":""}><div class="item-text">${safeText(item.title)}${item.date?`<small>Határidő: ${safeText(dateLabel(item.date))}</small>`:""}</div><button class="delete" data-delete data-type="tasks" data-id="${safeText(item.id)}">✕</button></div></div>`);
- renderItems("noteList",data.notes,item=>`<div class="item"><strong>${safeText(item.title)}</strong><small>${safeText(item.created)}</small><p>${safeText(item.body).replaceAll("\n","<br>")}</p><button class="delete" data-delete data-type="notes" data-id="${safeText(item.id)}">Törlés</button></div>`);
- renderItems("projectList",data.projects,item=>`<div class="item"><strong>${safeText(item.title)}</strong><p>${safeText(item.description).replaceAll("\n","<br>")}</p><small>Létrehozva: ${safeText(item.created)}</small><button class="delete" data-delete data-type="projects" data-id="${safeText(item.id)}">Törlés</button></div>`);
- renderItems("shoppingList",data.shopping,item=>{
-  const shop=detectShopCategory(item.title);
-  const fixed=item.storeMode==="fixed"&&item.targetStore;
-  const target=fixed?"Csak: "+item.targetStore:(item.categoryLabel||shop.label);
-  return `<div class="item ${item.done?"done":""}"><div class="row"><input class="check" type="checkbox" data-toggle data-type="shopping" data-id="${safeText(item.id)}" ${item.done?"checked":""}><div class="item-text">${safeText(item.title)}<small>📍 ${safeText(target)}</small></div><button type="button" data-shop-map="${safeText(item.id)}">Térkép</button><button class="delete" data-delete data-type="shopping" data-id="${safeText(item.id)}">✕</button></div></div>`
- });
- document.getElementById("taskCount").textContent=data.tasks.filter(x=>!x.done).length;
- document.getElementById("noteCount").textContent=data.notes.length;
- document.getElementById("projectCount").textContent=data.projects.length;
- document.getElementById("shoppingCount").textContent=data.shopping.filter(x=>!x.done).length
-}
-document.getElementById("taskForm").addEventListener("submit",e=>{e.preventDefault();const title=document.getElementById("taskTitle").value.trim();if(!title)return;data.tasks.unshift({id:makeId(),title,date:document.getElementById("taskDate").value,done:false});saveData();e.target.reset()});
-document.getElementById("noteForm").addEventListener("submit",e=>{e.preventDefault();const title=document.getElementById("noteTitle").value.trim();if(!title)return;data.notes.unshift({id:makeId(),title,body:document.getElementById("noteBody").value.trim(),created:new Date().toLocaleString("hu-HU")});saveData();e.target.reset()});
-document.getElementById("projectForm").addEventListener("submit",e=>{e.preventDefault();const title=document.getElementById("projectTitle").value.trim();if(!title)return;data.projects.unshift({id:makeId(),title,description:document.getElementById("projectDescription").value.trim(),created:new Date().toLocaleDateString("hu-HU")});saveData();e.target.reset()});
-document.getElementById("shoppingForm").addEventListener("submit",e=>{e.preventDefault();const title=document.getElementById("shoppingTitle").value.trim();if(!title)return;addShopping(title);e.target.reset()});
+/* --------------------------------------------------
+   1. ADATTÁROLÁS
+-------------------------------------------------- */
 
-document.getElementById("findPlace").addEventListener("click",()=>{
- const p=getPlaceDetails(),status=document.getElementById("placeStatus");
- if(p.target==="custom"&&!p.custom){status.textContent="Írd be a keresett hely nevét vagy címét.";return}
- if(p.target==="any"&&!p.task){status.textContent="Írd be, mit szeretnél elintézni.";return}
- const query=p.target==="any"?p.query:p.query;openMap(query);
- status.textContent="Megnyitottam a Google Térképet: "+query+". Ellenőrizd a találatot."
-});
-document.getElementById("nearbyPlaces").addEventListener("click",()=>{openMap("boltok a közelemben",true);document.getElementById("placeStatus").textContent="A Google Térképen engedélyezd a helyadatokat, ha szükséges."});
-document.getElementById("savePlace").addEventListener("click",()=>{
- const p=getPlaceDetails(),status=document.getElementById("placeStatus");if(!p.task){status.textContent="Írd be, mire emlékeztessen a Lares.";return}if(p.target==="custom"&&!p.custom){status.textContent="Írd be a saját hely nevét vagy címét.";return}
- const items=loadPlaces();items.unshift({id:makeId(),task:p.task,target:p.target,custom:p.custom,query:p.query,created:new Date().toISOString()});
- if(!savePlaces(items)){status.textContent="Nem sikerült menteni a helyemlékeztetőt.";return}
- status.textContent="Elmentettem a helyemlékeztetőt. Automatikus helyfigyelés még nincs bekapcsolva.";renderPlaces()
-});
-function renderPlaces(){
- const box=document.getElementById("placeList"),items=loadPlaces();
- if(!items.length){box.textContent="Még nincs mentett helyhez kötött emlékeztető.";return}
- box.innerHTML="<h3>Mentett emlékeztetők</h3>"+items.map(item=>`<div class="item"><strong>${safeText(item.task)}</strong><small>Cél: ${safeText(item.target==="any"?"Bármelyik megfelelő üzlet":item.target==="custom"?item.custom:item.target)}</small><div class="map-actions" style="margin-top:8px"><button type="button" data-open-place="${safeText(item.id)}">Térkép</button><button type="button" data-remove-place="${safeText(item.id)}">Törlés</button></div></div>`).join("");
- box.querySelectorAll("[data-open-place]").forEach(b=>b.addEventListener("click",()=>{const item=loadPlaces().find(x=>x.id===b.dataset.openPlace);if(!item)return;openMap(item.query||(item.target==="any"?detectShopCategory(item.task).query:item.target==="custom"?item.custom:item.target))}));
- box.querySelectorAll("[data-remove-place]").forEach(b=>b.addEventListener("click",()=>{if(!confirm("Törlöd ezt a helyemlékeztetőt?"))return;savePlaces(loadPlaces().filter(x=>x.id!==b.dataset.removePlace));renderPlaces()}))
+const STORAGE_KEY = "lares05_data_v1";
+const PLACE_KEY = "lares_place_reminders_v1";
+const SETTINGS_KEY = "lares09_settings_v1";
+const AI_SESSION_KEY = "lares09_ai_session_key";
+
+function emptyData() {
+  return {tasks:[],notes:[],projects:[],shopping:[]};
 }
+
+function loadData() {
+  try {
+    const p = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return {
+      tasks:Array.isArray(p.tasks) ? p.tasks : [],
+      notes:Array.isArray(p.notes) ? p.notes : [],
+      projects:Array.isArray(p.projects) ? p.projects : [],
+      shopping:Array.isArray(p.shopping) ? p.shopping : []
+    };
+  } catch {
+    return emptyData();
+  }
+}
+
+let data = loadData();
+
+function makeId() {
+  return Date.now().toString(36) +
+    Math.random().toString(36).slice(2);
+}
+
+function safeText(v) {
+  return String(v ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    renderAll();
+    updateStorageInfo();
+    return true;
+  } catch {
+    alert("Nem sikerült menteni. Ellenőrizd a böngésző tárhelyét.");
+    return false;
+  }
+}
+
+function loadPlaces() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PLACE_KEY) || "[]");
+    return Array.isArray(p) ? p : [];
+  } catch {
+    return [];
+  }
+}
+
+function savePlaces(items) {
+  try {
+    localStorage.setItem(PLACE_KEY,JSON.stringify(items));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+let settings = loadSettings();
+
+/* --------------------------------------------------
+   2. DÁTUMOK
+-------------------------------------------------- */
+
+function normalize(t) {
+  return String(t || "")
+    .toLocaleLowerCase("hu-HU")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[!?.,;:]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function dateISO(d) {
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function addDays(date,days) {
+  const d = new Date(date);
+  d.setDate(d.getDate()+days);
+  return d;
+}
+
+function parseDate(text) {
+  const n = normalize(text);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (/\bholnaputan\b/.test(n))
+    return dateISO(addDays(today,2));
+
+  if (/\bholnap\b/.test(n))
+    return dateISO(addDays(today,1));
+
+  if (/\bma\b/.test(n))
+    return dateISO(today);
+
+  const iso = String(text).match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
+
+  if (iso) {
+    const d = new Date(+iso[1],+iso[2]-1,+iso[3]);
+    if (
+      d.getFullYear() === +iso[1] &&
+      d.getMonth() === +iso[2]-1 &&
+      d.getDate() === +iso[3]
+    ) return dateISO(d);
+  }
+
+  const weekdays = {
+    vasarnap:0,hetfo:1,kedd:2,szerda:3,
+    csutortok:4,pentek:5,szombat:6
+  };
+
+  for (const [name,num] of Object.entries(weekdays)) {
+    if (new RegExp("\\b"+name+"[a-z]*\\b").test(n)) {
+      let diff = (num-today.getDay()+7)%7;
+      if (diff === 0) diff = 7;
+      return dateISO(addDays(today,diff));
+    }
+  }
+
+  const hu = String(text).match(
+    /\b(\d{1,2})[./](\d{1,2})[./]?(20\d{2})?\b/
+  );
+
+  if (hu) {
+    const day = +hu[1];
+    const month = +hu[2];
+    let year = hu[3] ? +hu[3] : today.getFullYear();
+    let d = new Date(year,month-1,day);
+
+    if (d.getDate() !== day || d.getMonth() !== month-1)
+      return "";
+
+    if (!hu[3] && d < today) {
+      year++;
+      d = new Date(year,month-1,day);
+    }
+
+    return dateISO(d);
+  }
+
+  return "";
+}
+
+function dateLabel(v) {
+  if (!v) return "";
+  const p = v.split("-").map(Number);
+  return new Date(p[0],p[1]-1,p[2])
+    .toLocaleDateString("hu-HU",{
+      year:"numeric",month:"long",day:"numeric"
+    });
+}
+
+/* --------------------------------------------------
+   3. NAVIGÁCIÓ
+-------------------------------------------------- */
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p =>
+    p.classList.toggle("active",p.id === name)
+  );
+
+  document.querySelectorAll("#navigation button").forEach(b =>
+    b.classList.toggle("active",b.dataset.page === name)
+  );
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("#navigation button").forEach(b =>
+  b.addEventListener("click",()=>showPage(b.dataset.page))
+);
+
+document.querySelectorAll("[data-goto]").forEach(b =>
+  b.addEventListener("click",()=>showPage(b.dataset.goto))
+);
+
+/* --------------------------------------------------
+   4. BOLTFELISMERÉS ÉS TÉRKÉP
+-------------------------------------------------- */
+
+function detectStore(original) {
+  const n = normalize(original);
+
+  if (/\blidl(?:ben|ban|be|ba|bol|hez|hoz|nel|nal)?\b/.test(n))
+    return "Lidl";
+
+  if (/\bidea(?:ban|ben|ba|be|bol|hez|hoz|nal|nel)?\b/.test(n))
+    return "Idea";
+
+  if (/\bmaxi(?:ban|ben|ba|be|bol|hez|hoz|nal|nel)?\b/.test(n))
+    return "Maxi";
+
+  if (/\bsp\b|\bs p\b/.test(n))
+    return "SP";
+
+  if (/\b(gyogyszertar|patika)\b/.test(n))
+    return "pharmacy";
+
+  return "";
+}
+
+function detectShopCategory(item) {
+  const n = normalize(item);
+
+  if (/\b(kenyer|zsemle|kifli|peksutemeny|pekseg)\w*\b/.test(n))
+    return {
+      category:"bakery",
+      label:"Pékség vagy élelmiszerbolt",
+      query:"pékség"
+    };
+
+  if (/\b(tej|tojas|cukor|liszt|olaj|vaj|sajt|hus|viz|kenyer)\w*\b/.test(n))
+    return {
+      category:"supermarket",
+      label:"Élelmiszerbolt vagy szupermarket",
+      query:"szupermarket"
+    };
+
+  if (/\b(mosopor|oblito|mosogatoszer|tisztitoszer|sampon|tusfurdo|szappan|dezodor)\w*\b/.test(n))
+    return {
+      category:"drugstore",
+      label:"Drogéria vagy szupermarket",
+      query:"drogéria"
+    };
+
+  if (/\b(benzin|gazolaj|uzemanyag)\w*\b/.test(n))
+    return {
+      category:"fuel",
+      label:"Benzinkút",
+      query:"benzinkút"
+    };
+
+  if (/\b(csavar|szeg|furo|szerszam|festek|cement)\w*\b/.test(n))
+    return {
+      category:"hardware",
+      label:"Vas- és barkácsbolt",
+      query:"vasbolt barkácsbolt"
+    };
+
+  if (/\b(gyogyszer|tabletta|krem|kotosszer|vitamin)\w*\b/.test(n))
+    return {
+      category:"pharmacy",
+      label:"Gyógyszertár",
+      query:"gyógyszertár"
+    };
+
+  return {
+    category:"supermarket",
+    label:"Élelmiszerbolt vagy szupermarket",
+    query:"szupermarket"
+  };
+}
+
+function openMap(query,nearby=false) {
+  const search = nearby ? "boltok a közelemben" : query;
+  const url =
+    "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(search);
+
+  window.open(url,"_blank","noopener");
+}
+
+function getPlaceDetails() {
+  const task = document.getElementById("placeTask").value.trim();
+  const target = document.getElementById("placeTarget").value;
+  const custom = document.getElementById("customPlace").value.trim();
+
+  let query;
+
+  if (target === "custom") query = custom;
+  else if (target === "pharmacy") query = "gyógyszertár";
+  else if (target === "any") query = detectShopCategory(task).query;
+  else query = target;
+
+  return {task,target,custom,query};
+}
+
+document.getElementById("findPlace").addEventListener("click",() => {
+  const p = getPlaceDetails();
+  const status = document.getElementById("placeStatus");
+
+  if (p.target === "custom" && !p.custom) {
+    status.textContent = "Írd be a keresett hely nevét vagy címét.";
+    return;
+  }
+
+  if (p.target === "any" && !p.task) {
+    status.textContent = "Írd be, mit szeretnél elintézni.";
+    return;
+  }
+
+  openMap(p.query);
+  status.textContent = "Térképes keresés: " + p.query;
+});
+
+document.getElementById("nearbyPlaces").addEventListener("click",() => {
+  openMap("boltok a közelemben",true);
+  document.getElementById("placeStatus").textContent =
+    "A Google Térképen engedélyezd a helyadatokat, ha szükséges.";
+});
+
+document.getElementById("savePlace").addEventListener("click",() => {
+  const p = getPlaceDetails();
+  const status = document.getElementById("placeStatus");
+
+  if (!p.task) {
+    status.textContent = "Írd be, mire emlékeztessen a Lares.";
+    return;
+  }
+
+  if (p.target === "custom" && !p.custom) {
+    status.textContent = "Írd be a saját hely nevét vagy címét.";
+    return;
+  }
+
+  const items = loadPlaces();
+
+  items.unshift({
+    id:makeId(),
+    task:p.task,
+    target:p.target,
+    custom:p.custom,
+    query:p.query,
+    created:new Date().toISOString()
+  });
+
+  if (!savePlaces(items)) {
+    status.textContent = "Nem sikerült menteni.";
+    return;
+  }
+
+  status.textContent =
+    "Elmentettem a helyemlékeztetőt. Automatikus helyfigyelés még nincs.";
+  renderPlaces();
+});
+
+function renderPlaces() {
+  const box = document.getElementById("placeList");
+  const items = loadPlaces();
+
+  if (!items.length) {
+    box.textContent = "Még nincs mentett helyhez kötött emlékeztető.";
+    return;
+  }
+
+  box.innerHTML = "<h3>Mentett emlékeztetők</h3>" +
+    items.map(item => `
+      <div class="item">
+        <strong>${safeText(item.task)}</strong>
+        <small>Cél: ${safeText(
+          item.target === "any" ? "Bármelyik megfelelő üzlet" :
+          item.target === "custom" ? item.custom : item.target
+        )}</small>
+        <div class="map-actions" style="margin-top:8px">
+          <button type="button" data-open-place="${safeText(item.id)}">Térkép</button>
+          <button type="button" data-remove-place="${safeText(item.id)}">Törlés</button>
+        </div>
+      </div>
+    `).join("");
+
+  box.querySelectorAll("[data-open-place]").forEach(b =>
+    b.addEventListener("click",() => {
+      const item = loadPlaces().find(x => x.id === b.dataset.openPlace);
+      if (item) openMap(item.query || item.custom || item.target);
+    })
+  );
+
+  box.querySelectorAll("[data-remove-place]").forEach(b =>
+    b.addEventListener("click",() => {
+      if (!confirm("Törlöd ezt a helyemlékeztetőt?")) return;
+      savePlaces(loadPlaces().filter(x => x.id !== b.dataset.removePlace));
+      renderPlaces();
+    })
+  );
+}
+
 document.getElementById("showPlaces").addEventListener("click",renderPlaces);
 
-function addTask(title,date=""){data.tasks.unshift({id:makeId(),title,date,done:false});saveData()}
-function addNote(title,body){data.notes.unshift({id:makeId(),title,body,created:new Date().toLocaleString("hu-HU")});saveData()}
-function processCommand(original){
- const n=normalize(original),answer=document.getElementById("answer");
- if(!n){answer.style.display="block";answer.textContent="Írd be, mit szeretnél elintézni.";return}
- answer.style.display="block";
- const farmingAction=/\b(permeteztem|permetezes|permetezni|elvetettem|vetettem|elultettem|arattam|betakaritottam|tragyaztam|szantottam|talajmunkat vegeztem)\b/.test(n);
- if(farmingAction){addNote(/permetez/.test(n)?"Gazdasági napló – permetezés":"Gazdasági napló – mezőgazdasági munka",original);answer.textContent="✅ Elmentettem a gazdasági jegyzetek közé.\n\nBejegyzés: "+original+"\n\nA pontos táblát, dátumot, készítményt és dózist később külön mezőkkel is kezelhetjük.";return}
- const store=detectStore(original);
- const shoppingIntent=/\b(vennem|venni|vegyek|vasaroljak|vasarolni|beszereznem|beszerezni|megvennem|megvenni|kellene|kell|elfogyott|elfogy)\b/.test(n);
- const shoppingItemPattern=/\b(kenyer\w*|zsemle\w*|kifli\w*|tej\w*|viz\w*|tojas\w*|cukor\w*|liszt\w*|olaj\w*|vaj\w*|sajt\w*|hus\w*|mosopor\w*|oblito\w*|mosogatoszer\w*|tisztitoszer\w*|sampon\w*|tusfurdo\w*|benzin\w*|gazolaj\w*|csavar\w*|szeg\w*|szerszam\w*|gyogyszer\w*|tabletta\w*|cement\w*|festek\w*)\b/.test(n);
- const explicitShopPhrase=!!store&&shoppingIntent;
- if(shoppingIntent&&(store||shoppingItemPattern)){
-  const item=extractShoppingItem(original);
-  const target=addShopping(item,store);
-  answer.textContent="✅ Bevásárlólistára tettem: "+item+".\n\n📍 Hozzárendelés: "+target+".\n\nA Térkép gombbal megkeresheted a megfelelő üzletet. "+(store?"A keresés csak a megadott üzletláncra irányul. ":"")+"A háttérben működő automatikus helyértesítés ebben a webes verzióban még nem működik.";
-  renderPlaces();return
- }
- if(/\b(bevasarlolista|bevasarlas)\b/.test(n)){
-  const item=extractShoppingItem(original);addShopping(item);answer.textContent="🛒 Felvettem a bevásárlólistára:\n"+item;return
- }
- const reminderIntent=/\b(emlekeztess|emlekezteto|feladat|idopontom van|mennem kell|kell mennem|orvos|fogorvos|talalkozom|talalkozo)\b/.test(n);
- if(reminderIntent){const date=parseDate(original),title=original.replace(/^\s*(lares[, ]*)/i,"").trim();addTask(title,date);answer.textContent="✅ Felvettem a feladatok közé:\n"+title+(date?"\n📅 Dátum: "+dateLabel(date):"")+"\n\nFigyelem: ez jelenleg egy mentett feladat, nem automatikus telefonos értesítés.";return}
- const noteIntent=/\b(jegyezd fel|jegyzet|irt fel|ird fel|tervem|jovore|majd|gondolat|otlet|ne felejtsd el)\b/.test(n);
- if(noteIntent){addNote("Lares-jegyzet",original);answer.textContent="📝 Elmentettem a jegyzetek közé:\n"+original;return}
- const date=parseDate(original);addTask(original,date);answer.textContent="✅ Feladatként elmentettem:\n"+original+(date?"\n📅 Dátum: "+dateLabel(date):"")+"\n\nHa más kategóriába szántad, egyelőre a megfelelő fülön tudod módosítani."
+/* --------------------------------------------------
+   5. FELADATOK, JEGYZETEK, PROJEKTEK, LISTA
+-------------------------------------------------- */
+
+function renderItems(containerId,items,makeHTML) {
+  const box = document.getElementById(containerId);
+
+  if (!items.length) {
+    box.innerHTML = '<div class="muted">Még nincs itt semmi.</div>';
+    return;
+  }
+
+  box.innerHTML = items.map(makeHTML).join("");
+
+  box.querySelectorAll("[data-delete]").forEach(b =>
+    b.addEventListener("click",() => {
+      if (!confirm("Biztosan törlöd ezt az elemet?")) return;
+
+      const type = b.dataset.type;
+      const id = b.dataset.id;
+
+      data[type] = data[type].filter(x => x.id !== id);
+      saveData();
+    })
+  );
+
+  box.querySelectorAll("[data-toggle]").forEach(input =>
+    input.addEventListener("change",() => {
+      const item = data[input.dataset.type]
+        .find(x => x.id === input.dataset.id);
+
+      if (item) {
+        item.done = input.checked;
+        saveData();
+      }
+    })
+  );
+
+  box.querySelectorAll("[data-shop-map]").forEach(button =>
+    button.addEventListener("click",() => {
+      const item = data.shopping.find(x => x.id === button.dataset.shopMap);
+      if (!item) return;
+
+      const query = item.storeMode === "fixed" && item.targetStore
+        ? item.targetStore
+        : (item.mapQuery || detectShopCategory(item.title).query);
+
+      openMap(query);
+      showPage("map");
+
+      document.getElementById("placeStatus").textContent =
+        "Térképes keresés: " + query;
+    })
+  );
 }
-document.getElementById("askButton").addEventListener("click",()=>{const q=document.getElementById("question");processCommand(q.value);q.value=""});
-document.getElementById("question").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("askButton").click()}});
-document.getElementById("today").textContent=new Date().toLocaleDateString("hu-HU",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-renderAll();renderPlaces();
+
+function renderAll() {
+  renderItems("taskList",data.tasks,item => `
+    <div class="item ${item.done ? "done" : ""}">
+      <div class="row">
+        <input class="check" type="checkbox"
+          data-toggle data-type="tasks" data-id="${safeText(item.id)}"
+          ${item.done ? "checked" : ""}>
+        <div class="item-text">
+          ${safeText(item.title)}
+          ${item.date ? `<small>Határidő: ${safeText(dateLabel(item.date))}</small>` : ""}
+        </div>
+        <button class="delete" data-delete data-type="tasks"
+          data-id="${safeText(item.id)}">✕</button>
+      </div>
+    </div>
+  `);
+
+  renderItems("noteList",data.notes,item => `
+    <div class="item">
+      <strong>${safeText(item.title)}</strong>
+      <small>${safeText(item.created)}</small>
+      <p>${safeText(item.body).replaceAll("\n","<br>")}</p>
+      <button class="delete" data-delete data-type="notes"
+        data-id="${safeText(item.id)}">Törlés</button>
+    </div>
+  `);
+
+  renderItems("projectList",data.projects,item => `
+    <div class="item">
+      <strong>${safeText(item.title)}</strong>
+      <p>${safeText(item.description).replaceAll("\n","<br>")}</p>
+      <small>Létrehozva: ${safeText(item.created)}</small>
+      <button class="delete" data-delete data-type="projects"
+        data-id="${safeText(item.id)}">Törlés</button>
+    </div>
+  `);
+
+  renderItems("shoppingList",data.shopping,item => {
+    const shop = detectShopCategory(item.title);
+    const fixed = item.storeMode === "fixed" && item.targetStore;
+    const target = fixed ? "Csak: " + item.targetStore :
+      (item.categoryLabel || shop.label);
+
+    return `
+      <div class="item ${item.done ? "done" : ""}">
+        <div class="row">
+          <input class="check" type="checkbox"
+            data-toggle data-type="shopping" data-id="${safeText(item.id)}"
+            ${item.done ? "checked" : ""}>
+          <div class="item-text">
+            ${safeText(item.title)}
+            <small>📍 ${safeText(target)}</small>
+          </div>
+          <button type="button" data-shop-map="${safeText(item.id)}">Térkép</button>
+          <button class="delete" data-delete data-type="shopping"
+            data-id="${safeText(item.id)}">✕</button>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("taskCount").textContent =
+    data.tasks.filter(x => !x.done).length;
+  document.getElementById("noteCount").textContent = data.notes.length;
+  document.getElementById("projectCount").textContent = data.projects.length;
+  document.getElementById("shoppingCount").textContent =
+    data.shopping.filter(x => !x.done).length;
+}
+
+function addTask(title,date="") {
+  data.tasks.unshift({id:makeId(),title,date,done:false});
+  return saveData();
+}
+
+function addNote(title,body) {
+  data.notes.unshift({
+    id:makeId(),
+    title,
+    body,
+    created:new Date().toLocaleString("hu-HU")
+  });
+  return saveData();
+}
+
+function addProject(title,description) {
+  data.projects.unshift({
+    id:makeId(),
+    title,
+    description,
+    created:new Date().toLocaleDateString("hu-HU")
+  });
+  return saveData();
+}
+
+function addShopping(title,explicitStore="") {
+  const shop = detectShopCategory(title);
+
+  data.shopping.unshift({
+    id:makeId(),
+    title,
+    done:false,
+    storeMode:explicitStore ? "fixed" : "auto",
+    targetStore:explicitStore || "",
+    category:shop.category,
+    categoryLabel:shop.label,
+    mapQuery:explicitStore || shop.query
+  });
+
+  saveData();
+
+  const items = loadPlaces();
+  items.unshift({
+    id:makeId(),
+    task:"Vásárlás: " + title,
+    target:explicitStore || "any",
+    custom:"",
+    query:explicitStore || shop.query,
+    created:new Date().toISOString()
+  });
+
+  savePlaces(items);
+  return explicitStore || shop.label;
+}
+
+document.getElementById("taskForm").addEventListener("submit",e => {
+  e.preventDefault();
+
+  const title = document.getElementById("taskTitle").value.trim();
+  if (!title) return;
+
+  addTask(title,document.getElementById("taskDate").value);
+  e.target.reset();
+});
+
+document.getElementById("noteForm").addEventListener("submit",e => {
+  e.preventDefault();
+
+  const title = document.getElementById("noteTitle").value.trim();
+  if (!title) return;
+
+  addNote(title,document.getElementById("noteBody").value.trim());
+  e.target.reset();
+});
+
+document.getElementById("projectForm").addEventListener("submit",e => {
+  e.preventDefault();
+
+  const title = document.getElementById("projectTitle").value.trim();
+  if (!title) return;
+
+  addProject(title,document.getElementById("projectDescription").value.trim());
+  e.target.reset();
+});
+
+document.getElementById("shoppingForm").addEventListener("submit",e => {
+  e.preventDefault();
+
+  const title = document.getElementById("shoppingTitle").value.trim();
+  if (!title) return;
+
+  addShopping(title);
+  e.target.reset();
+});
+
+/* --------------------------------------------------
+   6. AI-BEÁLLÍTÁSOK
+-------------------------------------------------- */
+
+function getAIKey() {
+  try {
+    return sessionStorage.getItem(AI_SESSION_KEY) ||
+      (settings.rememberKey ? (settings.apiKey || "") : "");
+  } catch {
+    return settings.rememberKey ? (settings.apiKey || "") : "";
+  }
+}
+
+function getAIModel() {
+  return document.getElementById("aiModel").value.trim() ||
+    settings.model ||
+    "gemini-2.5-flash-lite";
+}
+
+function updateAIStatus(text) {
+  document.getElementById("aiStatus").textContent = text;
+}
+
+function saveAISettings() {
+  const model = document.getElementById("aiModel").value.trim();
+  const key = document.getElementById("aiKey").value.trim();
+  const remember = document.getElementById("rememberKey").checked;
+  const status = document.getElementById("aiSettingsStatus");
+
+  if (!model) {
+    status.textContent = "Add meg az AI-modell nevét.";
+    return;
+  }
+
+  settings.model = model;
+  settings.rememberKey = remember;
+
+  if (remember && key) {
+    settings.apiKey = key;
+  } else if (!remember) {
+    delete settings.apiKey;
+  }
+
+  try {
+    localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+
+    if (key) {
+      if (remember) {
+        sessionStorage.removeItem(AI_SESSION_KEY);
+      } else {
+        sessionStorage.setItem(AI_SESSION_KEY,key);
+      }
+    }
+
+    status.textContent =
+      "A beállításokat elmentettem ezen a böngészőn.";
+    updateAIStatus(
+      getAIKey()
+        ? "AI-kulcs beállítva. A kapcsolat még nincs feltétlenül tesztelve."
+        : "AI nincs beállítva. A helyi funkciók továbbra is működnek."
+    );
+  } catch {
+    status.textContent = "Nem sikerült elmenteni a beállításokat.";
+  }
+}
+
+document.getElementById("saveAI").addEventListener("click",saveAISettings);
+
+document.getElementById("clearAIKey").addEventListener("click",() => {
+  if (!confirm("Törlöd az elmentett AI-kulcsot?")) return;
+
+  delete settings.apiKey;
+  settings.rememberKey = false;
+
+  try {
+    localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+    sessionStorage.removeItem(AI_SESSION_KEY);
+  } catch {}
+
+  document.getElementById("aiKey").value = "";
+  document.getElementById("rememberKey").checked = false;
+
+  updateAIStatus("AI-kulcs törölve.");
+  document.getElementById("aiSettingsStatus").textContent =
+    "Az AI-kulcsot töröltem a Lares beállításaiból.";
+});
+
+/* --------------------------------------------------
+   7. GEMINI API
+-------------------------------------------------- */
+
+async function callAI(userText) {
+  const apiKey = getAIKey();
+
+  if (!apiKey) {
+    throw new Error(
+      "Nincs AI-kulcs beállítva. Nyisd meg a Beállításokat."
+    );
+  }
+
+  const model = getAIModel();
+
+  const systemPrompt = `
+Te a Lares nevű magyar személyi asszisztens vagy.
+A feladatod a felhasználó kérésének megértése és egyszerű,
+helyi alkalmazásműveletté alakítása.
+
+Kizárólag egy JSON-objektumot adj vissza, más szöveg nélkül.
+
+A JSON formátuma:
+{
+  "action": "answer | task | note | shopping | project",
+  "title": "rövid cím vagy feladat",
+  "body": "jegyzet vagy projekt leírása",
+  "date": "YYYY-MM-DD vagy üres szöveg",
+  "store": "Lidl | Idea | Maxi | SP | pharmacy | üres szöveg",
+  "answer": "rövid magyar nyelvű válasz"
+}
+
+Szabályok:
+- Ha a felhasználó feladatot, időpontot vagy emlékeztetőt kér, action=task.
+- Ha jegyzetet, gondolatot vagy ötletet akar elmenteni, action=note.
+- Ha vásárlást kér, action=shopping.
+- Ha projektet akar létrehozni, action=project.
+- Ha csak kérdez vagy beszélget, action=answer.
+- Dátumot csak akkor adj meg, ha a kérésből egyértelműen meghatározható.
+- Ha a dátum nem egyértelmű, hagyd üresen.
+- Ne találj ki üzletet, címet vagy időpontot.
+- Ha a felhasználó egy konkrét üzletláncot nevez meg, a store mezőben add meg.
+- Ne állítsd, hogy telefonos értesítést, háttérfigyelést vagy külső műveletet
+  ténylegesen végrehajtottál.
+- Ne törölj és ne módosíts meglévő adatot.
+- A felhasználó által kért műveletet röviden és pontosan foglald össze.
+- A választ magyarul add meg.
+`;
+
+  const response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/" +
+    encodeURIComponent(model) +
+    ":generateContent?key=" + encodeURIComponent(apiKey),
+    {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        systemInstruction:{
+          parts:[{text:systemPrompt}]
+        },
+        contents:[{
+          role:"user",
+          parts:[{text:userText}]
+        }],
+        generationConfig:{
+          temperature:0.2,
+          responseMimeType:"application/json"
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const err = await response.json();
+      detail = err.error?.message || "";
+    } catch {}
+
+    throw new Error(
+      "Az AI-kérés sikertelen (" + response.status + "). " +
+      (detail || "Ellenőrizd a modellt, a kulcsot és az internetet.")
+    );
+  }
+
+  const result = await response.json();
+  const text = result.candidates?.[0]?.content?.parts
+    ?.map(p => p.text || "")
+    .join("");
+
+  if (!text) {
+    throw new Error("Az AI nem adott értelmezhető választ.");
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("Az AI válasza nem volt érvényes JSON.");
+  }
+}
+
+document.getElementById("testAI").addEventListener("click",async () => {
+  const status = document.getElementById("aiSettingsStatus");
+  status.textContent = "Kapcsolat ellenőrzése...";
+
+  try {
+    const result = await callAI(
+      "Csak azt válaszold a JSON answer mezőjében, hogy: A kapcsolat működik."
+    );
+
+    status.textContent =
+      "Sikeres AI-kapcsolat.\nVálasz: " +
+      String(result.answer || "Az AI válaszolt.");
+  } catch (err) {
+    status.textContent = "Hiba: " + err.message;
+  }
+});
+
+/* --------------------------------------------------
+   8. AI-MŰVELETEK
+-------------------------------------------------- */
+
+function executeAIAction(result,original) {
+  const action = String(result.action || "answer").toLowerCase();
+  const title = String(result.title || original).trim().slice(0,200);
+  const body = String(result.body || "").slice(0,10000);
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(result.date || "")
+    ? result.date
+    : "";
+  const store = ["Lidl","Idea","Maxi","SP","pharmacy"].includes(result.store)
+    ? result.store
+    : "";
+
+  switch (action) {
+    case "task":
+      addTask(title,date);
+      return "✅ Feladatként elmentettem:\n" + title +
+        (date ? "\n📅 Határidő: " + dateLabel(date) : "") +
+        "\n\nEz mentett feladat, nem automatikus telefonos értesítés.";
+
+    case "note":
+      addNote(title,body || original);
+      return "📝 Elmentettem a jegyzetek közé:\n" + title;
+
+    case "shopping": {
+      const target = addShopping(title,store);
+      renderPlaces();
+      return "🛒 Felvettem a bevásárlólistára:\n" + title +
+        "\n📍 Cél: " + target +
+        "\n\nA térképes keresést külön meg tudod nyitni.";
+    }
+
+    case "project":
+      addProject(title,body || original);
+      return "📁 Létrehoztam a projektet:\n" + title;
+
+    default:
+      return String(result.answer || "Megértettem a kérésedet.");
+  }
+}
+
+/* --------------------------------------------------
+   9. HELYI, AI NÉLKÜLI ALAPMŰKÖDÉS
+-------------------------------------------------- */
+
+function extractShoppingItem(original) {
+  let text = String(original || "").trim();
+
+  text = text.replace(/^(lares[\s,]*)/i,"")
+    .replace(/\b(a|az)\s+(lidl|idea|maxi|sp)\s*(ben|ban|be|ba|hez|hoz|nel|nal)\b/gi," ")
+    .replace(/\b(lidl|idea|maxi|sp)\s*(ben|ban|be|ba|bol|hoz|nel|nal)\b/gi," ")
+    .replace(/\b(a|az)\s+(lidl|idea|maxi|sp)\b/gi," ")
+    .replace(/\b(gyogyszertarban|patikaban|gyógyszertárban|patikába)\b/gi," ")
+    .replace(/\b(holnaputan|holnap|ma)\b/gi," ")
+    .replace(/\b(kellene vennem|kell vennem|kell venni|vennem kell|vegyek|vasaroljak|vásároljak|vasarolni|vásárolni|meg kell vennem|megvennem|megvenni|beszereznem|beszerezni|venni)\b/gi," ")
+    .replace(/\b(kellene|kell|elfogyott|elfogy|vegyél|vegyel|emlékeztess|emlekeztess|jegyezd fel|írd fel|ird fel)\b/gi," ")
+    .replace(/[,.!?]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+
+  return text || "Bevásárlás";
+}
+
+function processLocalCommand(original) {
+  const n = normalize(original);
+
+  if (!n) return "Írd be, mit szeretnél elintézni.";
+
+  const farmingAction =
+    /\b(permeteztem|permetezes|permetezni|elvetettem|vetettem|elultettem|arattam|betakaritottam|tragyaztam|szantottam|talajmunkat vegeztem)\b/.test(n);
+
+  if (farmingAction) {
+    addNote(
+      /permetez/.test(n)
+        ? "Gazdasági napló – permetezés"
+        : "Gazdasági napló – mezőgazdasági munka",
+      original
+    );
+
+    return "✅ Elmentettem a gazdasági jegyzetek közé:\n" + original;
+  }
+
+  const store = detectStore(original);
+
+  const shoppingIntent =
+    /\b(vennem|venni|vegyek|vasaroljak|vasarolni|beszereznem|beszerezni|megvennem|megvenni|kellene|kell|elfogyott|elfogy)\b/.test(n);
+
+  const shoppingItemPattern =
+    /\b(kenyer\w*|zsemle\w*|kifli\w*|tej\w*|viz\w*|tojas\w*|cukor\w*|liszt\w*|olaj\w*|vaj\w*|sajt\w*|hus\w*|mosopor\w*|oblito\w*|mosogatoszer\w*|tisztitoszer\w*|sampon\w*|tusfurdo\w*|benzin\w*|gazolaj\w*|csavar\w*|szeg\w*|szerszam\w*|gyogyszer\w*|tabletta\w*|cement\w*|festek\w*)\b/.test(n);
+
+  if (shoppingIntent && (store || shoppingItemPattern)) {
+    const item = extractShoppingItem(original);
+    const target = addShopping(item,store);
+    renderPlaces();
+
+    return "🛒 Bevásárlólistára tettem: " + item +
+      "\n📍 Hozzárendelés: " + target +
+      "\n\nAz automatikus helyértesítés még nem működik.";
+  }
+
+  if (/\b(bevasarlolista|bevasarlas)\b/.test(n)) {
+    const item = extractShoppingItem(original);
+    addShopping(item);
+    return "🛒 Felvettem a bevásárlólistára:\n" + item;
+  }
+
+  const reminderIntent =
+    /\b(emlekeztess|emlekezteto|feladat|idopontom van|mennem kell|kell mennem|orvos|fogorvos|talalkozom|talalkozo)\b/.test(n);
+
+  if (reminderIntent) {
+    const date = parseDate(original);
+    const title = original.replace(/^\s*(lares[, ]*)/i,"").trim();
+
+    addTask(title,date);
+
+    return "✅ Felvettem a feladatok közé:\n" + title +
+      (date ? "\n📅 Dátum: " + dateLabel(date) : "") +
+      "\n\nEz egy mentett feladat, nem automatikus telefonos értesítés.";
+  }
+
+  const noteIntent =
+    /\b(jegyezd fel|jegyzet|ird fel|tervem|jovore|majd|gondolat|otlet|ne felejtsd el)\b/.test(n);
+
+  if (noteIntent) {
+    addNote("Lares-jegyzet",original);
+    return "📝 Elmentettem a jegyzetek közé:\n" + original;
+  }
+
+  const date = parseDate(original);
+  addTask(original,date);
+
+  return "✅ Feladatként elmentettem:\n" + original +
+    (date ? "\n📅 Dátum: " + dateLabel(date) : "") +
+    "\n\nAI nélkül egyszerű szabályok alapján dolgoztam.";
+}
+
+document.getElementById("askButton").addEventListener("click",async () => {
+  const input = document.getElementById("question");
+  const answer = document.getElementById("answer");
+  const button = document.getElementById("askButton");
+  const q = input.value.trim();
+
+  if (!q) {
+    answer.style.display = "block";
+    answer.textContent = "Írd be, mit szeretnél elintézni.";
+    return;
+  }
+
+  answer.style.display = "block";
+  button.disabled = true;
+
+  try {
+    if (getAIKey()) {
+      answer.textContent = "A Lares értelmezi a kérésedet...";
+
+      const result = await callAI(q);
+      answer.textContent = executeAIAction(result,q);
+      updateAIStatus("Az AI az előző kérésnél működött.");
+    } else {
+      answer.textContent = processLocalCommand(q);
+      updateAIStatus(
+        "AI-kulcs nincs beállítva. A szabályalapú helyi működést használtam."
+      );
+    }
+
+    input.value = "";
+  } catch (err) {
+    answer.textContent =
+      "Az AI nem tudta feldolgozni a kérést.\n" +
+      err.message +
+      "\n\nA kérésedet nem hajtottam végre helyette automatikusan. " +
+      "Ellenőrizd a beállításokat, majd próbáld újra, vagy használd " +
+      "az AI nélküli funkciókat.";
+
+    updateAIStatus("AI-hiba: " + err.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("question").addEventListener("keydown",e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById("askButton").click();
+  }
+});
+
+/* --------------------------------------------------
+   10. BIZTONSÁGI MENTÉS ÉS VISSZAÁLLÍTÁS
+-------------------------------------------------- */
+
+document.getElementById("exportData").addEventListener("click",() => {
+  const backup = {
+    format:"lares-backup",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    data,
+    places:loadPlaces()
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "lares-backup-" + dateISO(new Date()) + ".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url),1500);
+});
+
+document.getElementById("importData").addEventListener("click",async () => {
+  const input = document.getElementById("importFile");
+  const file = input.files && input.files[0];
+
+  if (!file) {
+    alert("Először válaszd ki a biztonsági mentés JSON-fájlját.");
+    return;
+  }
+
+  if (!confirm(
+    "A visszaállítás lecseréli a jelenlegi feladatokat, jegyzeteket, " +
+    "projekteket, bevásárlólistát és helyemlékeztetőket. Folytatod?"
+  )) return;
+
+  try {
+    const backup = JSON.parse(await file.text());
+
+    if (
+      !backup ||
+      backup.format !== "lares-backup" ||
+      !backup.data ||
+      !Array.isArray(backup.data.tasks) ||
+      !Array.isArray(backup.data.notes) ||
+      !Array.isArray(backup.data.projects) ||
+      !Array.isArray(backup.data.shopping) ||
+      !Array.isArray(backup.places)
+    ) {
+      throw new Error("Ez nem érvényes Lares-biztonsági mentés.");
+    }
+
+    data = {
+      tasks:backup.data.tasks,
+      notes:backup.data.notes,
+      projects:backup.data.projects,
+      shopping:backup.data.shopping
+    };
+
+    if (!saveData() || !savePlaces(backup.places)) {
+      throw new Error("A mentés nem sikerült teljesen.");
+    }
+
+    renderPlaces();
+    alert("A Lares biztonsági mentését visszaállítottam.");
+    input.value = "";
+  } catch (err) {
+    alert("Nem sikerült visszaállítani: " + err.message);
+  }
+});
+
+function updateStorageInfo() {
+  const bytes = new Blob([
+    localStorage.getItem(STORAGE_KEY) || ""
+  ]).size;
+
+  document.getElementById("storageInfo").textContent =
+    "A jelenlegi adatok a böngésző helyi tárhelyén vannak. " +
+    "A fő adatállomány mérete körülbelül " +
+    Math.max(1,Math.round(bytes/1024)) +
+    " KB. Ez még nem közvetlen SD-kártyás tárolás.";
+}
+
+/* --------------------------------------------------
+   11. INDÍTÁS
+-------------------------------------------------- */
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("hu-HU",{
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+
+document.getElementById("aiModel").value =
+  settings.model || "gemini-2.5-flash-lite";
+
+document.getElementById("rememberKey").checked =
+  !!settings.rememberKey;
+
+if (settings.rememberKey && settings.apiKey) {
+  document.getElementById("aiKey").value = settings.apiKey;
+}
+
+updateAIStatus(
+  getAIKey()
+    ? "AI-kulcs beállítva. Teszteld a kapcsolatot a Beállításokban."
+    : "AI nincs beállítva. A helyi funkciók ettől még működnek."
+);
+
+renderAll();
+renderPlaces();
+updateStorageInfo();
+
 </script>
 </body>
 </html>
