@@ -1,4 +1,4 @@
-const CACHE_NAME = "lares-cache-v1";
+const CACHE_NAME = "lares-cache-v2";
 
 const APP_FILES = [
   "./",
@@ -22,7 +22,10 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(key => key !== CACHE_NAME)
+          .filter(key =>
+            key.startsWith("lares-cache-") &&
+            key !== CACHE_NAME
+          )
           .map(key => caches.delete(key))
       )
     )
@@ -56,5 +59,48 @@ self.addEventListener("fetch", event => {
           cached || caches.match("./index.html")
         )
       )
+  );
+});
+
+/* Lares értesítések megjelenítése */
+self.addEventListener("message", event => {
+  if (event.data?.type === "SHOW_NOTIFICATION") {
+    const notification = event.data.notification || {};
+
+    event.waitUntil(
+      self.registration.showNotification(
+        notification.title || "Lares emlékeztető",
+        {
+          body: notification.body || "Van egy elintézendő feladatod.",
+          icon: "./icon.svg",
+          badge: "./icon.svg",
+          tag: notification.tag || "lares-reminder",
+          renotify: true,
+          data: {
+            url: "./"
+          }
+        }
+      )
+    );
+  }
+});
+
+/* Értesítésre kattintva Lares megnyitása */
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true
+    }).then(windowClients => {
+      for (const client of windowClients) {
+        if ("focus" in client) {
+          return client.focus();
+        }
+      }
+
+      return clients.openWindow("./");
+    })
   );
 });
