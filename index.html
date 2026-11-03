@@ -8,12 +8,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>Lares 1.2</title>
+<title>Lares 1.3</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 
-<!-- Leaflet térkép -->
 <link rel="stylesheet"
  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
@@ -39,6 +38,7 @@ html,body{
  width:100%;
  height:100%;
  height:100dvh;
+ min-height:0;
  margin:0;
 }
 
@@ -53,15 +53,17 @@ body{
  padding-bottom:env(safe-area-inset-bottom);
 }
 
+/* FEJLÉC */
+
 header{
- padding:7px 12px;
+ padding:8px 13px;
  background:#14212b;
  border-bottom:1px solid var(--border);
  flex-shrink:0;
 }
 
 .brand{
- font-size:22px;
+ font-size:24px;
  font-weight:850;
  line-height:1.1;
 }
@@ -75,8 +77,10 @@ header{
  color:var(--muted);
 }
 
+/* PARANCSMEZŐ */
+
 .command-area{
- padding:6px 9px;
+ padding:7px 10px;
  background:#101a25;
  border-bottom:1px solid var(--accent);
  flex-shrink:0;
@@ -99,9 +103,10 @@ label{
  flex:1;
  min-width:0;
  margin:0;
- height:42px;
- min-height:42px;
+ height:43px;
+ min-height:43px;
  max-height:65px;
+ resize:none;
 }
 
 .command-buttons{
@@ -115,6 +120,8 @@ label{
  font-size:12px;
  white-space:nowrap;
 }
+
+/* GOMBOK */
 
 button{
  border:0;
@@ -171,33 +178,34 @@ button:disabled{
  font-size:11px;
 }
 
+/* NAVIGÁCIÓ */
+
 nav{
- display:flex;
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
  gap:5px;
- padding:5px;
- overflow-x:auto;
+ padding:6px 8px;
  flex-shrink:0;
- scrollbar-width:none;
  background:var(--bg);
 }
 
-nav::-webkit-scrollbar{
- display:none;
+nav button{
+ width:100%;
+ min-width:0;
+ padding:9px 2px;
+ font-size:11px;
+ white-space:nowrap;
+ text-align:center;
 }
 
-nav button{
- flex:0 0 auto;
- padding:8px 10px;
- font-size:12px;
- white-space:nowrap;
-}
+/* FŐ TARTALOM */
 
 main{
  width:100%;
- max-width:900px;
+ max-width:1000px;
  margin:0 auto;
- padding:7px 9px;
- flex:1;
+ padding:9px 11px;
+ flex:1 1 0;
  min-height:0;
  overflow:hidden;
  display:flex;
@@ -206,7 +214,7 @@ main{
 
 .page{
  display:none;
- flex:1;
+ flex:1 1 0;
  min-height:0;
  overflow-y:auto;
  overscroll-behavior:contain;
@@ -218,33 +226,37 @@ main{
  flex-direction:column;
 }
 
+/* KÁRTYÁK */
+
 .card,.stat{
  background:var(--panel);
  border:1px solid var(--border);
- border-radius:11px;
- padding:10px;
- margin-bottom:7px;
+ border-radius:13px;
+ padding:12px;
+ margin-bottom:8px;
 }
 
 h2{
- font-size:16px;
- margin:0 0 7px;
+ font-size:17px;
+ margin:0 0 8px;
 }
 
 h3{
- font-size:13px;
+ font-size:14px;
  margin:0 0 7px;
 }
 
 p{
  font-size:13px;
- line-height:1.4;
+ line-height:1.45;
  margin:5px 0 8px;
 }
 
 .muted{
  color:var(--muted);
 }
+
+/* ŰRLAPOK */
 
 input,textarea,select{
  display:block;
@@ -264,10 +276,6 @@ textarea{
  resize:vertical;
 }
 
-.command-area textarea{
- resize:none;
-}
-
 .row{
  display:flex;
  gap:6px;
@@ -279,39 +287,43 @@ textarea{
  min-width:0;
 }
 
+/* FŐOLDALI KÁRTYÁK */
+
 .stats{
  display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));
- gap:7px;
- margin-bottom:7px;
+ gap:9px;
+ margin-bottom:8px;
 }
 
 .stat{
  margin:0;
  text-align:left;
- min-height:58px;
+ min-height:75px;
  display:flex;
  align-items:center;
- gap:9px;
+ gap:10px;
  cursor:pointer;
- font-size:12px;
+ font-size:13px;
 }
 
 .stat strong{
  color:var(--accent);
- font-size:23px;
- min-width:25px;
+ font-size:28px;
+ min-width:30px;
 }
 
 .stat span{
- line-height:1.25;
+ line-height:1.3;
 }
+
+/* LISTÁK */
 
 .item{
  display:flex;
  align-items:center;
  gap:8px;
- padding:9px 0;
+ padding:10px 0;
  border-bottom:1px solid var(--border);
  overflow-wrap:anywhere;
 }
@@ -347,6 +359,8 @@ textarea{
  padding:6px;
 }
 
+/* TÉRKÉP */
+
 .map-actions{
  display:flex;
  gap:7px;
@@ -366,20 +380,11 @@ textarea{
 
 .bubble{
  background:#101b23;
- padding:9px;
- border-radius:8px;
+ padding:10px;
+ border-radius:9px;
  white-space:pre-wrap;
 }
 
-footer{
- flex-shrink:0;
- text-align:center;
- padding:4px;
- color:var(--muted);
- font-size:10px;
-}
-
-/* Térkép */
 #mapCanvas{
  width:100%;
  height:42vh;
@@ -405,68 +410,191 @@ footer{
  margin-top:6px;
 }
 
-/* Telefonos képernyő optimalizálás */
-@media(min-width:600px){
- .stats{
-  grid-template-columns:repeat(4,minmax(0,1fr));
- }
- .stat{
-  display:block;
- }
- .stat strong{
-  display:block;
- }
+/* LÁBLÉC */
+
+footer{
+ flex-shrink:0;
+ text-align:center;
+ padding:6px;
+ color:var(--muted);
+ font-size:10px;
 }
 
+/* =====================================
+   LARES 1.3 – TELJES KÉPERNYŐS FŐOLDAL
+   ===================================== */
+
+#home{
+ min-height:100%;
+ gap:10px;
+}
+
+#home>.card:first-child{
+ flex:1 1 0;
+ min-height:120px;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-evenly;
+}
+
+#home .stats{
+ flex:1 1 0;
+ min-height:150px;
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ grid-template-rows:repeat(2,minmax(0,1fr));
+ gap:9px;
+ margin:0;
+}
+
+#home .stat{
+ min-height:0;
+ height:100%;
+ padding:12px;
+ font-size:14px;
+}
+
+#home .stat strong{
+ font-size:30px;
+}
+
+#home>.card:last-child{
+ flex:1 1 0;
+ min-height:120px;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-evenly;
+}
+
+/* TABLET / NAGYOBB KIJELZŐ */
+
+@media(min-width:600px){
+
+ #home .stats{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+ }
+
+ #home .stat{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+ }
+
+}
+
+/* KISEBB TELEFON */
+
+@media(max-width:380px){
+
+ nav{
+  gap:3px;
+  padding:5px;
+ }
+
+ nav button{
+  font-size:10px;
+  padding:8px 1px;
+ }
+
+ main{
+  padding:6px;
+ }
+
+ #home{
+  gap:7px;
+ }
+
+ .card{
+  padding:10px;
+ }
+
+}
+
+/* ALACSONY KIJELZŐ */
+
 @media(max-height:750px){
+
  header{
-  padding:4px 10px;
+  padding:5px 10px;
  }
+
  .brand{
-  font-size:19px;
+  font-size:20px;
  }
+
  .command-area{
   padding:4px 8px;
  }
+
  .command-row textarea{
-  height:36px;
-  min-height:36px;
+  height:37px;
+  min-height:37px;
  }
+
  .notice{
   display:none;
  }
+
  nav{
-  padding:3px;
+  padding:4px 5px;
  }
+
  nav button{
-  padding:6px 8px;
+  padding:6px 1px;
  }
+
  main{
-  padding:4px 7px;
+  padding:5px 8px;
  }
+
  .card,.stat{
-  padding:7px;
+  padding:8px;
   margin-bottom:5px;
  }
+
+ #home{
+  gap:5px;
+ }
+
+ #home .stat{
+  padding:7px;
+ }
+
  #mapCanvas{
   height:38vh;
  }
+
+ footer{
+  padding:3px;
+ }
+
 }
 
 @media(max-height:600px){
+
  header{
   padding:3px 8px;
  }
+
  .brand{
-  font-size:17px;
+  font-size:18px;
  }
+
  .subtitle{
   display:none;
  }
+
  nav button{
-  padding:5px 7px;
+  padding:5px 1px;
  }
+
+ #home .stat strong{
+  font-size:24px;
+ }
+
 }
+
 </style>
 </head>
 
@@ -474,7 +602,7 @@ footer{
 
 <header>
  <div class="brand">LARES<span>.</span></div>
- <div class="subtitle">Személyi asszisztens · 1.2</div>
+ <div class="subtitle">Személyi asszisztens · 1.3</div>
 </header>
 
 <div class="command-area">
@@ -785,7 +913,7 @@ footer{
 
   <p class="notice">
    A GPS-pozíció és a térképes keresés működéséhez internet és helyengedély szükséges.
-   A háttérben működő automatikus GPS-riasztás későbbi fejlesztés.
+   A bezárt alkalmazás melletti automatikus GPS-riasztás külön Android-fejlesztést igényel.
   </p>
 
  </div>
@@ -901,13 +1029,16 @@ footer{
 
 </main>
 
-<footer>Lares 1.2 · Személyi asszisztens</footer>
+<footer>Lares 1.3 · Személyi asszisztens</footer>
 
 
 <script>
 "use strict";
 
-/* ADATTÁROLÁS */
+/* =====================================
+   ADATTÁROLÁS
+   A RÉGI KULCSOK MEGMARADNAK!
+   ===================================== */
 
 const STORAGE_KEY="lares05_data_v1";
 const PLACE_KEY="lares_place_reminders_v1";
@@ -935,6 +1066,8 @@ let mapReady=false;
 let userPosition=null;
 let nearbyLayer=null;
 
+let reminderTimer=null;
+
 
 /* SEGÉDFÜGGVÉNYEK */
 
@@ -952,7 +1085,9 @@ function safeText(value){
 }
 
 function loadData(){
+
  try{
+
   const p=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
 
   return {
@@ -963,20 +1098,38 @@ function loadData(){
   };
 
  }catch{
-  return {tasks:[],notes:[],projects:[],shopping:[]};
+
+  return {
+   tasks:[],
+   notes:[],
+   projects:[],
+   shopping:[]
+  };
+
  }
+
 }
 
 function saveData(){
+
  try{
+
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
   renderAll();
+
+  scheduleReminderCheck();
+
  }catch(e){
+
   alert("Nem sikerült menteni. Ellenőrizd a telefon tárhelyét.");
+
  }
+
 }
 
 function normalize(text){
+
  return String(text||"")
  .toLocaleLowerCase("hu-HU")
  .normalize("NFD")
@@ -984,9 +1137,11 @@ function normalize(text){
  .replace(/[!?.,;:]/g," ")
  .replace(/\s+/g," ")
  .trim();
+
 }
 
 function todayISO(){
+
  const d=new Date();
 
  return [
@@ -994,35 +1149,46 @@ function todayISO(){
   String(d.getMonth()+1).padStart(2,"0"),
   String(d.getDate()).padStart(2,"0")
  ].join("-");
+
 }
 
 function addDays(date,days){
+
  const d=new Date(date);
+
  d.setDate(d.getDate()+days);
+
  return d;
+
 }
 
 function dateISO(d){
+
  return [
   d.getFullYear(),
   String(d.getMonth()+1).padStart(2,"0"),
   String(d.getDate()).padStart(2,"0")
  ].join("-");
+
 }
 
 function parseDate(text){
+
  const n=normalize(text);
  const today=new Date();
 
  today.setHours(0,0,0,0);
 
  if(/\bholnaputan\b/.test(n))return dateISO(addDays(today,2));
+
  if(/\bholnap\b/.test(n))return dateISO(addDays(today,1));
+
  if(/\bma\b/.test(n))return dateISO(today);
 
  const iso=String(text).match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
 
  if(iso){
+
   const d=new Date(+iso[1],+iso[2]-1,+iso[3]);
 
   if(
@@ -1030,6 +1196,7 @@ function parseDate(text){
    d.getMonth()===+iso[2]-1&&
    d.getDate()===+iso[3]
   )return dateISO(d);
+
  }
 
  const weekdays={
@@ -1051,18 +1218,23 @@ function parseDate(text){
    if(diff===0)diff=7;
 
    return dateISO(addDays(today,diff));
+
   }
+
  }
 
  return "";
+
 }
 
 function dateLabel(value){
+
  if(!value)return "";
 
  const p=value.split("-").map(Number);
 
  return new Date(p[0],p[1]-1,p[2]).toLocaleDateString("hu-HU");
+
 }
 
 
@@ -1075,29 +1247,43 @@ function showPage(name){
  if(!page)return;
 
  document.querySelectorAll(".page").forEach(p=>{
+
   p.classList.toggle("active",p.id===name);
 
   if(p.id===name)p.scrollTop=0;
+
  });
 
  document.querySelectorAll("#navigation button").forEach(b=>{
+
   b.classList.toggle("active",b.dataset.page===name);
+
  });
 
  if(name==="map"){
+
   setTimeout(()=>{
+
    initMap();
+
    if(map)map.invalidateSize();
+
   },150);
+
  }
+
 }
 
 document.querySelectorAll("#navigation button").forEach(b=>{
+
  b.addEventListener("click",()=>showPage(b.dataset.page));
+
 });
 
 document.querySelectorAll("[data-goto]").forEach(b=>{
+
  b.addEventListener("click",()=>showPage(b.dataset.goto));
+
 });
 
 
@@ -1106,6 +1292,7 @@ document.querySelectorAll("[data-goto]").forEach(b=>{
 function addTask(title,date="",time="",reminder="none"){
 
  data.tasks.unshift({
+
   id:makeId(),
   title,
   date,
@@ -1113,31 +1300,38 @@ function addTask(title,date="",time="",reminder="none"){
   reminder,
   done:false,
   created:todayISO()
+
  });
 
  saveData();
+
 }
 
 function addNote(title,body){
 
  data.notes.unshift({
+
   id:makeId(),
   title,
   body,
   created:todayISO()
+
  });
 
  saveData();
+
 }
 
 function addShopping(title,store=""){
 
  data.shopping.unshift({
+
   id:makeId(),
   title,
   done:false,
   targetStore:store||"",
   created:todayISO()
+
  });
 
  saveData();
@@ -1148,6 +1342,7 @@ function addShopping(title,store=""){
   "",
   store||title
  );
+
 }
 
 
@@ -1158,8 +1353,11 @@ function renderItems(containerId,items,type){
  const box=document.getElementById(containerId);
 
  if(!items.length){
+
   box.innerHTML='<p class="muted">Még nincs itt semmi.</p>';
+
   return;
+
  }
 
  box.innerHTML=items.map(item=>{
@@ -1167,17 +1365,25 @@ function renderItems(containerId,items,type){
   let detail="";
 
   if(item.date){
+
    detail="Határidő: "+dateLabel(item.date);
+
   }else if(item.created){
+
    detail="Létrehozva: "+item.created;
+
   }
 
   if(type==="tasks"&&item.time){
+
    detail+=" · "+item.time;
+
   }
 
   if(type==="tasks"&&item.reminder&&item.reminder!=="none"){
+
    detail+=" · 🔔 Értesítés";
+
   }
 
   if(type==="notes")detail=item.body||detail;
@@ -1185,10 +1391,13 @@ function renderItems(containerId,items,type){
   if(type==="projects")detail=item.description||detail;
 
   if(type==="shopping"&&item.targetStore){
+
    detail="Üzlet: "+item.targetStore;
+
   }
 
   return `
+
    <div class="item ${item.done?"done":""}">
 
     ${["tasks","shopping"].includes(type)?
@@ -1215,6 +1424,7 @@ function renderItems(containerId,items,type){
      aria-label="Törlés">✕</button>
 
    </div>
+
   `;
 
  }).join("");
@@ -1232,6 +1442,7 @@ function renderItems(containerId,items,type){
    data[type]=data[type].filter(item=>item.id!==id);
 
    saveData();
+
   });
 
  });
@@ -1246,8 +1457,11 @@ function renderItems(containerId,items,type){
    );
 
    if(item){
+
     item.done=input.checked;
+
     saveData();
+
    }
 
   });
@@ -1259,8 +1473,11 @@ function renderItems(containerId,items,type){
 function renderAll(){
 
  renderItems("taskList",data.tasks,"tasks");
+
  renderItems("shoppingList",data.shopping,"shopping");
+
  renderItems("projectList",data.projects,"projects");
+
  renderItems("noteList",data.notes,"notes");
 
  document.getElementById("taskCount").textContent=
@@ -1274,6 +1491,7 @@ function renderAll(){
 
  document.getElementById("noteCount").textContent=
   data.notes.length;
+
 }
 
 
@@ -1284,26 +1502,29 @@ document.getElementById("taskForm").addEventListener("submit",e=>{
  e.preventDefault();
 
  const title=document.getElementById("taskTitle").value.trim();
+
  const date=document.getElementById("taskDate").value;
+
  const time=document.getElementById("taskTime").value;
+
  const reminder=document.getElementById("taskReminder").value;
 
  if(!title)return;
 
  if(time&&!date){
+
   alert("Az időponthoz dátumot is adj meg!");
+
   return;
+
  }
 
  if(reminder!=="none"&&date&&!time){
-  alert("Az értesítéshez pontos időpontot is adj meg!");
-  return;
- }
 
- if(reminder!=="none"&&date&&time&&"Notification" in window&&Notification.permission!=="granted"){
-  if(!confirm("Az értesítések még nincsenek engedélyezve. Mentsem a feladatot így is?")){
-   return;
-  }
+  alert("Az értesítéshez pontos időpontot is adj meg!");
+
+  return;
+
  }
 
  addTask(title,date,time,reminder);
@@ -1337,6 +1558,7 @@ document.getElementById("noteForm").addEventListener("submit",e=>{
  e.preventDefault();
 
  const title=document.getElementById("noteTitle").value.trim();
+
  const body=document.getElementById("noteBody").value.trim();
 
  if(!title)return;
@@ -1355,6 +1577,7 @@ document.getElementById("projectForm").addEventListener("submit",e=>{
  e.preventDefault();
 
  const title=document.getElementById("projectTitle").value.trim();
+
  const description=document.getElementById("projectDescription").value.trim();
 
  if(!title)return;
@@ -1362,10 +1585,12 @@ document.getElementById("projectForm").addEventListener("submit",e=>{
  if(!confirm("Létrehozod ezt a projektet?\n\n"+title))return;
 
  data.projects.unshift({
+
   id:makeId(),
   title,
   description,
   created:todayISO()
+
  });
 
  saveData();
@@ -1375,27 +1600,39 @@ document.getElementById("projectForm").addEventListener("submit",e=>{
 });
 
 
-/* ÉRTESÍTÉSI RENDSZER */
+/* =====================================
+   ÉRTESÍTÉSI RENDSZER
+   ===================================== */
 
 function getFired(){
 
  try{
+
   return JSON.parse(localStorage.getItem(FIRED_KEY)||"{}");
+
  }catch{
+
   return {};
+
  }
+
 }
 
 function saveFired(items){
+
  localStorage.setItem(FIRED_KEY,JSON.stringify(items));
+
 }
 
 async function enableNotifications(){
 
  if(!("Notification" in window)){
+
   document.getElementById("notificationStatus").textContent=
    "Ez a böngésző nem támogatja az értesítéseket.";
+
   return;
+
  }
 
  try{
@@ -1405,12 +1642,14 @@ async function enableNotifications(){
   if(permission==="granted"){
 
    document.getElementById("notificationStatus").textContent=
-    "✅ Értesítések engedélyezve.";
+    "✅ Értesítések engedélyezve. A telefon értesítési beállításait is ellenőrizd.";
 
-   sendNotification(
+   await sendNotification(
     "Lares aktiválva",
     "Az értesítési rendszer működik."
    );
+
+   checkReminders();
 
   }else{
 
@@ -1444,19 +1683,20 @@ async function sendNotification(title,body,tag="lares-reminder"){
 
    const registration=await navigator.serviceWorker.ready;
 
-   if(registration.active){
+   await registration.showNotification(title,{
 
-    registration.active.postMessage({
-     type:"SHOW_NOTIFICATION",
-     notification:{
-      title,
-      body,
-      tag
-     }
-    });
+    body,
+    icon:"./icon.svg",
+    badge:"./icon.svg",
+    tag,
+    renotify:true,
+    data:{
+     url:"./"
+    }
 
-    return;
-   }
+   });
+
+   return;
 
   }
 
@@ -1472,13 +1712,17 @@ async function sendNotification(title,body,tag="lares-reminder"){
 
 
 /*
-Az ellenőrzés akkor működik, amikor a Lares oldal aktív.
-A teljesen bezárt alkalmazásban nem garantált az időzítés.
+Fontos:
+Ez az ellenőrzés az aktív alkalmazásban működik.
+A Service Worker önmagában nem képes tartós időzítőként
+működni a bezárt alkalmazás helyett.
+A natív Androidos időzítés későbbi fejlesztés.
 */
 
 function checkReminders(){
 
  const now=new Date();
+
  const fired=getFired();
 
  let changed=false;
@@ -1493,13 +1737,16 @@ function checkReminders(){
 
   if(isNaN(target.getTime()))return;
 
-  const minutes=Math.floor((target-now)/60000);
+  const minutes=(target-now)/60000;
 
   let offsets=[];
 
   if(task.reminder==="15")offsets=[15];
+
   else if(task.reminder==="30")offsets=[30];
+
   else if(task.reminder==="both")offsets=[15,0];
+
   else offsets=[0];
 
   offsets.forEach(offset=>{
@@ -1507,6 +1754,11 @@ function checkReminders(){
    const key=task.id+"_"+offset;
 
    if(fired[key])return;
+
+   /*
+   Egyperces ellenőrzési ablak helyett
+   az esedékesség átlépését is kezeljük.
+   */
 
    if(minutes<=offset&&minutes>offset-1){
 
@@ -1544,37 +1796,62 @@ function checkReminders(){
 
 }
 
+function scheduleReminderCheck(){
+
+ checkReminders();
+
+}
+
 function updateNotificationStatus(){
 
  const box=document.getElementById("notificationStatus");
 
  if(!("Notification" in window)){
+
   box.textContent="Az értesítések nem támogatottak.";
+
   return;
+
  }
 
  if(Notification.permission==="granted"){
+
   box.textContent="✅ Az értesítések engedélyezve vannak.";
+
  }else if(Notification.permission==="denied"){
+
   box.textContent="Az értesítések tiltva vannak. A telefon beállításaiban engedélyezheted.";
+
  }else{
+
   box.textContent="Az értesítések még nincsenek engedélyezve.";
+
  }
 
 }
 
 updateNotificationStatus();
 
-setInterval(checkReminders,10000);
+/* Aktív alkalmazás ellenőrzése */
+
+reminderTimer=setInterval(checkReminders,10000);
 
 document.addEventListener("visibilitychange",()=>{
- if(!document.hidden)checkReminders();
+
+ if(!document.hidden){
+
+  checkReminders();
+
+ }
+
 });
 
 window.addEventListener("focus",checkReminders);
 
 
-/* TÉRKÉPES EMLÉKEZTETŐK */
+/* =====================================
+   TÉRKÉPES EMLÉKEZTETŐK
+   ===================================== */
 
 function loadPlaces(){
 
@@ -1585,7 +1862,9 @@ function loadPlaces(){
   return Array.isArray(p)?p:[];
 
  }catch{
+
   return [];
+
  }
 
 }
@@ -1593,10 +1872,15 @@ function loadPlaces(){
 function savePlaces(items){
 
  try{
+
   localStorage.setItem(PLACE_KEY,JSON.stringify(items));
+
   return true;
+
  }catch{
+
   return false;
+
  }
 
 }
@@ -1606,12 +1890,14 @@ function addPlaceReminder(task,target,custom="",queryOverride=""){
  const places=loadPlaces();
 
  places.unshift({
+
   id:makeId(),
   task,
   target,
   custom,
   query:queryOverride||(target==="custom"?custom:target),
   created:new Date().toISOString()
+
  });
 
  savePlaces(places);
@@ -1629,7 +1915,9 @@ function openMapSearch(query){
 function getPlaceDetails(){
 
  const task=document.getElementById("placeTask").value.trim();
+
  const target=document.getElementById("placeTarget").value;
+
  const custom=document.getElementById("customPlace").value.trim();
 
  let query=target==="custom"
@@ -1647,8 +1935,11 @@ document.getElementById("findPlace").addEventListener("click",()=>{
  const p=getPlaceDetails();
 
  if(p.target==="custom"&&!p.custom){
+
   alert("Add meg a keresett hely nevét vagy címét.");
+
   return;
+
  }
 
  openMapSearch(p.query);
@@ -1660,30 +1951,40 @@ document.getElementById("savePlace").addEventListener("click",()=>{
  const p=getPlaceDetails();
 
  if(!p.task){
+
   alert("Először írd be, mire szeretnél emlékeztetőt.");
+
   return;
+
  }
 
  if(p.target==="custom"&&!p.custom){
+
   alert("Add meg a saját hely nevét vagy címét.");
+
   return;
+
  }
 
  addPlaceReminder(p.task,p.target,p.custom,p.query);
 
  document.getElementById("placeStatus").textContent=
-  "Emlékeztető sikeresen mentve.";
+  "Emlékeztető sikeresen mentve. A háttérben történő GPS-riasztás még nincs aktiválva.";
 
 });
 
 document.getElementById("showPlaces").addEventListener("click",()=>{
 
  const places=loadPlaces();
+
  const box=document.getElementById("placeList");
 
  if(!places.length){
+
   box.textContent="Még nincs mentett emlékeztető.";
+
   return;
+
  }
 
  box.innerHTML=places.map(p=>`
@@ -1733,9 +2034,12 @@ function initMap(){
  const canvas=document.getElementById("mapCanvas");
 
  if(!window.L){
+
   document.getElementById("mapStatus").textContent=
    "A térképmotor nem töltődött be. Ellenőrizd az internetkapcsolatot.";
+
   return;
+
  }
 
  map=L.map(canvas).setView([45.9,20.1],10);
@@ -1776,6 +2080,7 @@ function locateUser(){
   position=>{
 
    const lat=position.coords.latitude;
+
    const lon=position.coords.longitude;
 
    userPosition={lat,lon};
@@ -1803,7 +2108,9 @@ function locateUser(){
    let message="Nem sikerült meghatározni a pozíciót.";
 
    if(error.code===1)message="A helymeghatározás engedélyezése szükséges.";
+
    if(error.code===2)message="A GPS-pozíció jelenleg nem elérhető.";
+
    if(error.code===3)message="A GPS-lekérés időtúllépés miatt megszakadt.";
 
    document.getElementById("mapStatus").textContent=message;
@@ -1834,8 +2141,11 @@ document.getElementById("locateMe").addEventListener("click",()=>{
 async function findNearby(type){
 
  if(!userPosition){
+
   alert("Először határozd meg a saját pozíciódat!");
+
   return;
+
  }
 
  const {lat,lon}=userPosition;
@@ -1848,8 +2158,10 @@ async function findNearby(type){
  let selector="node[shop](around:5000,"+lat+","+lon+");way[shop](around:5000,"+lat+","+lon+");";
 
  if(type==="pharmacy"){
+
   selector=
    'node[amenity=pharmacy](around:5000,'+lat+','+lon+');way[amenity=pharmacy](around:5000,'+lat+','+lon+');';
+
  }
 
  const query='[out:json][timeout:20];('+selector+');out center tags;';
@@ -1885,6 +2197,7 @@ async function findNearby(type){
   places.forEach(place=>{
 
    const pLat=place.lat||place.center?.lat;
+
    const pLon=place.lon||place.center?.lon;
 
    if(!pLat||!pLon)return;
@@ -1922,7 +2235,9 @@ document.getElementById("nearbyPharmacies").addEventListener("click",()=>{
 });
 
 
-/* AI-BEÁLLÍTÁSOK */
+/* =====================================
+   AI-BEÁLLÍTÁSOK
+   ===================================== */
 
 function getApiKey(){
 
@@ -1978,11 +2293,17 @@ function saveAISettings(){
   localStorage.removeItem(API_LOCAL_KEY);
 
   if(key){
+
    sessionStorage.setItem(API_SESSION_KEY,key);
+
    temporaryApiKey=key;
+
   }else{
+
    sessionStorage.removeItem(API_SESSION_KEY);
+
    temporaryApiKey="";
+
   }
 
  }
@@ -1999,6 +2320,7 @@ document.getElementById("clearAI").addEventListener("click",()=>{
  if(!confirm("Törlöd a Laresben tárolt API-kulcsot?"))return;
 
  localStorage.removeItem(API_LOCAL_KEY);
+
  sessionStorage.removeItem(API_SESSION_KEY);
 
  temporaryApiKey="";
@@ -2018,27 +2340,35 @@ function localContext(){
  return {
 
   tasks:data.tasks.slice(0,25).map(x=>({
+
    title:x.title,
    date:x.date||"",
    time:x.time||"",
    reminder:x.reminder||"none",
    done:!!x.done
+
   })),
 
   notes:data.notes.slice(0,20).map(x=>({
+
    title:x.title,
    body:x.body
+
   })),
 
   projects:data.projects.slice(0,20).map(x=>({
+
    title:x.title,
    description:x.description
+
   })),
 
   shopping:data.shopping.slice(0,30).map(x=>({
+
    title:x.title,
    done:!!x.done,
    store:x.targetStore||""
+
   }))
 
  };
@@ -2053,7 +2383,9 @@ async function askGemini(original){
  const key=getApiKey();
 
  if(!key){
+
   throw Error("Nincs API-kulcs. A Beállítások menüben add meg a Gemini-kulcsot.");
+
  }
 
  const model=aiSettings.model||"gemini-2.5-flash-lite";
@@ -2077,21 +2409,30 @@ Felhasználó kérése: ${original}`;
   ":generateContent?key="+encodeURIComponent(key);
 
  const res=await fetch(url,{
+
   method:"POST",
+
   headers:{"Content-Type":"application/json"},
+
   body:JSON.stringify({
+
    contents:[{parts:[{text:prompt}]}],
+
    generationConfig:{
     temperature:0.2,
     responseMimeType:"application/json"
    }
+
   })
+
  });
 
  const raw=await res.text();
 
  if(!res.ok){
+
   throw Error("Gemini-hiba ("+res.status+"): "+raw.slice(0,300));
+
  }
 
  const payload=JSON.parse(raw);
@@ -2102,13 +2443,19 @@ Felhasználó kérése: ${original}`;
  let parsed;
 
  try{
+
   parsed=JSON.parse(resultText);
+
  }catch{
+
   throw Error("Az AI nem adott értelmezhető választ.");
+
  }
 
  if(!parsed||typeof parsed.reply!=="string"||!Array.isArray(parsed.actions)){
+
   throw Error("Az AI-válasz formátuma nem megfelelő.");
+
  }
 
  return parsed;
@@ -2127,8 +2474,11 @@ function executeAction(a){
  if(a.type==="add_task"){
 
   const date=/^\d{4}-\d{2}-\d{2}$/.test(a.date||"")?a.date:"";
+
   const time=/^\d{2}:\d{2}$/.test(a.time||"")?a.time:"";
+
   const allowed=["0","15","30","both","none"];
+
   const reminder=allowed.includes(String(a.reminder))?String(a.reminder):"none";
 
   addTask(title,date,time,reminder);
@@ -2156,14 +2506,18 @@ function executeAction(a){
  if(a.type==="add_project"){
 
   if(!confirm("A Lares ezt a projektet szeretné létrehozni:\n\n"+title+"\n\nJóváhagyod?")){
+
    return "A projekt létrehozását megszakítottad.";
+
   }
 
   data.projects.unshift({
+
    id:makeId(),
    title,
    description:String(a.description||"").slice(0,3000),
    created:todayISO()
+
   });
 
   saveData();
@@ -2210,10 +2564,12 @@ async function processCommand(original){
    if(!action||typeof action.type!=="string")continue;
 
    if([
+
     "add_task",
     "add_note",
     "add_shopping",
     "add_project"
+
    ].includes(action.type)){
 
     const result=executeAction(action);
@@ -2305,7 +2661,9 @@ document.getElementById("testAI").addEventListener("click",async()=>{
 });
 
 
-/* HANGVEZÉRLÉS */
+/* =====================================
+   HANGVEZÉRLÉS
+   ===================================== */
 
 function setVoiceStatus(message){
 
@@ -2330,7 +2688,9 @@ function speakText(text){
  const utterance=new SpeechSynthesisUtterance(String(text||""));
 
  utterance.lang="hu-HU";
+
  utterance.rate=1;
+
  utterance.pitch=1;
 
  window.speechSynthesis.speak(utterance);
@@ -2358,8 +2718,11 @@ function initVoice(){
  recognition=new SR();
 
  recognition.lang="hu-HU";
+
  recognition.continuous=false;
+
  recognition.interimResults=false;
+
  recognition.maxAlternatives=1;
 
  recognition.onstart=()=>{
@@ -2393,9 +2756,11 @@ function initVoice(){
   voiceReplyMode=false;
 
   setVoiceStatus(
+
    event.error==="not-allowed"
     ?"A mikrofonengedélyt a böngészőben engedélyezd."
     :"Nem sikerült felismerni a beszédet ("+event.error+"). Próbáld újra."
+
   );
 
  };
@@ -2439,7 +2804,9 @@ document.getElementById("speakAnswer").addEventListener("click",()=>{
 });
 
 
-/* BIZTONSÁGI MENTÉS */
+/* =====================================
+   BIZTONSÁGI MENTÉS
+   ===================================== */
 
 document.getElementById("exportData").addEventListener("click",()=>{
 
@@ -2448,14 +2815,17 @@ document.getElementById("exportData").addEventListener("click",()=>{
   data,
   places:loadPlaces(),
   settings:aiSettings,
-  version:"1.2",
+  version:"1.3",
   exported:new Date().toISOString()
 
  };
 
  const blob=new Blob(
+
   [JSON.stringify(backup,null,2)],
+
   {type:"application/json"}
+
  );
 
  const url=URL.createObjectURL(blob);
@@ -2463,6 +2833,7 @@ document.getElementById("exportData").addEventListener("click",()=>{
  const a=document.createElement("a");
 
  a.href=url;
+
  a.download="lares-backup-"+todayISO()+".json";
 
  a.click();
@@ -2477,12 +2848,17 @@ document.getElementById("importData").addEventListener("click",async()=>{
  const file=document.getElementById("importFile").files[0];
 
  if(!file){
+
   alert("Válassz ki egy mentési fájlt!");
+
   return;
+
  }
 
  if(!confirm("A visszaállítás felülírhatja a jelenlegi adatokat. Folytatod?")){
+
   return;
+
  }
 
  try{
@@ -2492,13 +2868,21 @@ document.getElementById("importData").addEventListener("click",async()=>{
   const restored=backup.data||backup;
 
   if(
+
    !restored||
+
    !Array.isArray(restored.tasks)||
+
    !Array.isArray(restored.notes)||
+
    !Array.isArray(restored.projects)||
+
    !Array.isArray(restored.shopping)
+
   ){
+
    throw Error("Érvénytelen mentési fájl.");
+
   }
 
   data=restored;
@@ -2506,10 +2890,14 @@ document.getElementById("importData").addEventListener("click",async()=>{
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
 
   if(Array.isArray(backup.places)){
+
    savePlaces(backup.places);
+
   }
 
   renderAll();
+
+  scheduleReminderCheck();
 
   alert("A Lares adatai sikeresen visszaálltak.");
 
@@ -2522,33 +2910,84 @@ document.getElementById("importData").addEventListener("click",async()=>{
 });
 
 
-/* SERVICE WORKER */
+/* =====================================
+   SERVICE WORKER
+   ===================================== */
 
 if("serviceWorker" in navigator&&location.protocol.startsWith("http")){
 
- window.addEventListener("load",()=>{
+ window.addEventListener("load",async()=>{
 
-  navigator.serviceWorker.register("./sw.js")
-   .then(()=>console.log("Lares Service Worker aktív."))
-   .catch(e=>console.log("Service Worker hiba:",e));
+  try{
+
+   const registration=await navigator.serviceWorker.register("./sw.js",{
+    updateViaCache:"none"
+   });
+
+   console.log("Lares Service Worker regisztrálva.");
+
+   registration.update();
+
+   if(registration.waiting){
+
+    registration.waiting.postMessage({
+     type:"SKIP_WAITING"
+    });
+
+   }
+
+   registration.addEventListener("updatefound",()=>{
+
+    const worker=registration.installing;
+
+    if(!worker)return;
+
+    worker.addEventListener("statechange",()=>{
+
+     if(worker.state==="installed"&&navigator.serviceWorker.controller){
+
+      console.log("Lares frissítés telepítve.");
+
+     }
+
+    });
+
+   });
+
+   navigator.serviceWorker.addEventListener("controllerchange",()=>{
+
+    console.log("Lares háttérkomponens frissült.");
+
+   });
+
+  }catch(e){
+
+   console.log("Service Worker hiba:",e);
+
+  }
 
  });
 
 }
 
 
-/* INDÍTÁS */
+/* =====================================
+   INDÍTÁS
+   ===================================== */
 
 initVoice();
 
 loadAISettings();
 
 document.getElementById("today").textContent=
+
  new Date().toLocaleDateString("hu-HU",{
+
   weekday:"long",
   year:"numeric",
   month:"long",
   day:"numeric"
+
  });
 
 renderAll();
