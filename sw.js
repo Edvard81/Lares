@@ -1,4 +1,4 @@
-const CACHE_NAME = "lares-cache-v2";
+const CACHE_NAME = "lares-cache-v3";
 
 const APP_FILES = [
   "./",
@@ -6,6 +6,10 @@ const APP_FILES = [
   "./manifest.json",
   "./icon.svg"
 ];
+
+/* ================================
+   TELEPÍTÉS
+================================ */
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -16,6 +20,10 @@ self.addEventListener("install", event => {
 
   self.skipWaiting();
 });
+
+/* ================================
+   FRISSÍTÉS
+================================ */
 
 self.addEventListener("activate", event => {
   event.waitUntil(
@@ -28,11 +36,13 @@ self.addEventListener("activate", event => {
           )
           .map(key => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-
-  self.clients.claim();
 });
+
+/* ================================
+   FÁJLOK BETÖLTÉSE
+================================ */
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
@@ -55,52 +65,12 @@ self.addEventListener("fetch", event => {
         return response;
       })
       .catch(() =>
-        caches.match(event.request).then(cached =>
-          cached || caches.match("./index.html")
-        )
+        caches.match(event.request).then(cached => {
+          return cached || caches.match("./index.html");
+        })
       )
   );
 });
 
-/* Lares értesítések megjelenítése */
-self.addEventListener("message", event => {
-  if (event.data?.type === "SHOW_NOTIFICATION") {
-    const notification = event.data.notification || {};
-
-    event.waitUntil(
-      self.registration.showNotification(
-        notification.title || "Lares emlékeztető",
-        {
-          body: notification.body || "Van egy elintézendő feladatod.",
-          icon: "./icon.svg",
-          badge: "./icon.svg",
-          tag: notification.tag || "lares-reminder",
-          renotify: true,
-          data: {
-            url: "./"
-          }
-        }
-      )
-    );
-  }
-});
-
-/* Értesítésre kattintva Lares megnyitása */
-self.addEventListener("notificationclick", event => {
-  event.notification.close();
-
-  event.waitUntil(
-    clients.matchAll({
-      type: "window",
-      includeUncontrolled: true
-    }).then(windowClients => {
-      for (const client of windowClients) {
-        if ("focus" in client) {
-          return client.focus();
-        }
-      }
-
-      return clients.openWindow("./");
-    })
-  );
-});
+/* ================================
+  
