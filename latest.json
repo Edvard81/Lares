@@ -1,7 +1,7 @@
 {
   "app": "Lares",
-  "version": "2.1.0",
-  "downloadUrl": "https://github.com/Edvard81/Lares/releases/latest",
-  "releaseNotes": "Lares személyi asszisztens Android kiadás. A következő kiadás itt jelenik meg.",
-  "publishedAt": "2026-11-04"
+  "version": "2.3.0",
+  "downloadUrl": "https://github.com/Edvard81/Lares/releases/download/v2.3.0/app-release.apk",
+  "releaseNotes": "Lares Android kiadas 2.3.0",
+  "publishedAt": "2026-11-06T19:26:40.836180+00:00"
 }
