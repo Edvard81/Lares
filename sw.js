@@ -1,10 +1,11 @@
-const CACHE_NAME = "lares-cache-v3";
+const CACHE_NAME = "lares-cache-v4";
 
 const APP_FILES = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./icon.svg"
+  "./icon.svg",
+  "./icon/lares-mascot.svg"
 ];
 
 /* ================================
